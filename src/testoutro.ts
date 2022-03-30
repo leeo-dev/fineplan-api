@@ -1,2 +1,0 @@
-function leo (): void {}
-leo()
