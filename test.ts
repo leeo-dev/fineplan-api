@@ -1,0 +1,2 @@
+function leo (): void {}
+leo()
