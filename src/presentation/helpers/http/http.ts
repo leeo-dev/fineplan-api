@@ -1,4 +1,4 @@
-export const badRequest = (): any => ({
+export const badRequest = (error: Error): any => ({
   statusCode: 400,
-  body: ''
+  body: error
 })
