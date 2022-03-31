@@ -10,4 +10,14 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
   })
+  test('ensure SignUp Controller returns 400 if no password is provided ', () => {
+    const sut = new SignUpController()
+    const httpRequest = {
+      body: {
+        username: 'any_username'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+  })
 })
