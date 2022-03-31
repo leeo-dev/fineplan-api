@@ -9,6 +9,7 @@ describe('SignUp Controller', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('MissingParam: username'))
   })
   test('ensure SignUp Controller returns 400 if no password is provided ', () => {
     const sut = new SignUpController()
@@ -19,5 +20,6 @@ describe('SignUp Controller', () => {
     }
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new Error('MissingParam: password'))
   })
 })
