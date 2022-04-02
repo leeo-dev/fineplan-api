@@ -2,6 +2,8 @@ import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { LengthParamError } from '@/presentation/errors/length-param-error'
 import { SignUpController } from '@/presentation/controllers/signup'
 import { AddAccount, AddAccountParams } from '@/domain/usecases/account/add-account'
+import { forbidden } from '@/presentation/helpers/http/http'
+import { UsernameInUseError } from '@/presentation/errors/username-in-use-error'
 const mockAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
     async add (accountParams: AddAccountParams): Promise<string | null> {
@@ -81,5 +83,19 @@ describe('SignUp Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+  test('should SignUp Controller returns 403 if username is already in use', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
+      return await Promise.resolve(null)
+    })
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden(new UsernameInUseError()))
   })
 })
