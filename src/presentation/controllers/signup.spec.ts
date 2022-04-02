@@ -2,7 +2,7 @@ import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { LengthParamError } from '@/presentation/errors/length-param-error'
 import { SignUpController } from '@/presentation/controllers/signup'
 import { AddAccount, AddAccountParams } from '@/domain/usecases/account/add-account'
-import { forbidden } from '@/presentation/helpers/http/http'
+import { forbidden, serverError } from '@/presentation/helpers/http/http'
 import { UsernameInUseError } from '@/presentation/errors/username-in-use-error'
 const mockAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
@@ -97,5 +97,19 @@ describe('SignUp Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(forbidden(new UsernameInUseError()))
+  })
+  test('should SignUp Controller returns 500 if AddAccount throws', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(serverError())
   })
 })
