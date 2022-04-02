@@ -46,4 +46,16 @@ describe('SignUp Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new LengthParamError('username', 3, 25))
   })
+  test('should SignUp Controller returns 400 if password is less than 3 or more than 25 character ', () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'an'
+      }
+    }
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new LengthParamError('password', 3, 25))
+  })
 })
