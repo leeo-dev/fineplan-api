@@ -1,1 +1,5 @@
 .husky/
+node_modules/
+dist/
+husky/
+.husky
