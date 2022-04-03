@@ -48,4 +48,12 @@ describe('DbAddAccount UseCase', () => {
     const account = await sut.add(mockAccountParams())
     expect(account).toBeNull()
   })
+  test('Should throws if LoadUserByUsername throws', async () => {
+    const { sut, loadUserByUsernameStub } = makeSut()
+    jest.spyOn(loadUserByUsernameStub, 'loadByUsername').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const account = sut.add(mockAccountParams())
+    await expect(account).rejects.toThrow()
+  })
 })
