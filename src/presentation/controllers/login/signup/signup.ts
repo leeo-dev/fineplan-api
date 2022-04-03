@@ -1,9 +1,6 @@
-import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
-import { Controller } from '@/presentation/protocols/controller'
+import { HttpRequest, HttpResponse, Controller } from './signup-protocols'
 import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers/http/http'
-import { UsernameInUseError } from '@/presentation/errors/username-in-use-error'
-import { MissingParamError } from '@/presentation/errors/missing-param-error'
-import { LengthParamError } from '../errors/length-param-error'
+import { UsernameInUseError, MissingParamError, LengthParamError } from '@/presentation/errors'
 import { AddAccount } from '@/domain/usecases/account/add-account'
 export class SignUpController implements Controller {
   constructor (private readonly addAccount: AddAccount) {}
