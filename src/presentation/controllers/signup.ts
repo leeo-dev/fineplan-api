@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from '@/presentation/protocols/http'
 import { Controller } from '@/presentation/protocols/controller'
-import { badRequest, forbidden, serverError } from '@/presentation/helpers/http/http'
+import { badRequest, forbidden, ok, serverError } from '@/presentation/helpers/http/http'
 import { UsernameInUseError } from '@/presentation/errors/username-in-use-error'
 import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { LengthParamError } from '../errors/length-param-error'
@@ -22,10 +22,7 @@ export class SignUpController implements Controller {
       const { username, password } = httpRequest.body
       const id = await this.addAccount.add({ username, password })
       if (!id) return forbidden(new UsernameInUseError())
-      return {
-        statusCode: 200,
-        body: ''
-      }
+      return ok({ id })
     } catch (error) {
       return serverError()
     }
