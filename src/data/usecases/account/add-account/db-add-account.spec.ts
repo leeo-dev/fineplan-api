@@ -17,7 +17,7 @@ const mockAccount = (): AccountModel => ({
 
 const mockLoadUserByUsername = (): LoadUserByUsernameRepository => {
   class LoadUserByUsernameStub implements LoadUserByUsernameRepository {
-    async loadByUsername (username: string): Promise<AccountModel> {
+    async loadByUsername (username: string): Promise<AccountModel | null> {
       return await Promise.resolve(mockAccount())
     }
   }
@@ -42,5 +42,10 @@ describe('DbAddAccount UseCase', () => {
     const loadByUsername = jest.spyOn(loadUserByUsernameStub, 'loadByUsername')
     await sut.add(mockAccountParams())
     expect(loadByUsername).toHaveBeenCalledWith(mockAccountParams().username)
+  })
+  test('Should return null if LoadUserByUsername is not null', async () => {
+    const { sut } = makeSut()
+    const account = await sut.add(mockAccountParams())
+    expect(account).toBeNull()
   })
 })
