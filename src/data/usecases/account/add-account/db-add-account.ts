@@ -4,7 +4,9 @@ import { AddAccount, AddAccountParams } from '@/domain/usecases/account/add-acco
 export class DbAddAccount implements AddAccount {
   constructor (private readonly loadUserByUsername: LoadUserByUsernameRepository) {}
   async add (accountParams: AddAccountParams): Promise<string | null> {
-    await this.loadUserByUsername.loadByUsername(accountParams.username)
-    return null
+    const account = await this.loadUserByUsername.loadByUsername(accountParams.username)
+    if (account) return null
+
+    return 'any'
   }
 }
