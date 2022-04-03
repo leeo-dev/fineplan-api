@@ -2,7 +2,7 @@ import { MissingParamError } from '@/presentation/errors/missing-param-error'
 import { LengthParamError } from '@/presentation/errors/length-param-error'
 import { SignUpController } from '@/presentation/controllers/signup'
 import { AddAccount, AddAccountParams } from '@/domain/usecases/account/add-account'
-import { forbidden, serverError } from '@/presentation/helpers/http/http'
+import { forbidden, serverError, ok } from '@/presentation/helpers/http/http'
 import { UsernameInUseError } from '@/presentation/errors/username-in-use-error'
 const mockAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
@@ -111,5 +111,16 @@ describe('SignUp Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(serverError())
+  })
+  test('should SignUp Controller returns 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(ok({ id: 'valid_id' }))
   })
 })
