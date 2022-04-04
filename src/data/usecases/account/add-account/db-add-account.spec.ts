@@ -1,10 +1,6 @@
 
 import { DbAddAccount } from './db-add-account'
-import { LoadUserByUsernameRepository } from '@/data/protocols/load-user-by-username-repository'
-import { Hasher } from '@/data/protocols/hasher'
-import { AccountModel } from '@/domain/models/account'
-import { AddAccountParams } from '@/domain/usecases/account/add-account'
-import { AddAccountRepository } from '@/data/protocols/add-account-repository'
+import { LoadUserByUsernameRepository, Hasher, AccountModel, AddAccountParams, AddAccountRepository } from './db-add-account-protocols'
 
 const mockAccountParams = (): AddAccountParams => ({
   username: 'any_username',
