@@ -110,4 +110,9 @@ describe('DbAddAccount UseCase', () => {
     const account = sut.add(mockAccountParams())
     await expect(account).rejects.toThrow()
   })
+  test('Should DbAddAccount return an account id on success', async () => {
+    const { sut } = makeSut()
+    const id = await sut.add(mockAccountParams())
+    expect(id).toBe('valid_id')
+  })
 })
