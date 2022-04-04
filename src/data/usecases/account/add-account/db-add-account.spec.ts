@@ -4,6 +4,7 @@ import { LoadUserByUsernameRepository } from '@/data/protocols/load-user-by-user
 import { Hasher } from '@/data/protocols/hasher'
 import { AccountModel } from '@/domain/models/account'
 import { AddAccountParams } from '@/domain/usecases/account/add-account'
+import { AddAccountRepository } from '@/data/protocols/add-account-repository'
 
 const mockAccountParams = (): AddAccountParams => ({
   username: 'any_username',
@@ -29,24 +30,35 @@ const mockLoadUserByUsername = (): LoadUserByUsernameRepository => {
 const mockHasher = (): Hasher => {
   class HasherStub implements Hasher {
     async hash (value: string): Promise<string> {
-      return await Promise.resolve('any_hash')
+      return await Promise.resolve('hashed_password')
     }
   }
 
   return new HasherStub()
+}
+const mockAddAccountRepository = (): AddAccountRepository => {
+  class AddAccountRepository implements AddAccountRepository {
+    async add (addAccount: AddAccountParams): Promise<string> {
+      return await Promise.resolve('hashed_password')
+    }
+  }
+
+  return new AddAccountRepository()
 }
 
 type SutType = {
   sut: DbAddAccount
   loadUserByUsernameStub: LoadUserByUsernameRepository
   hasherStub: Hasher
+  addAccountRepositoryStub: AddAccountRepository
 }
 
 const makeSut = (): SutType => {
   const hasherStub = mockHasher()
   const loadUserByUsernameStub = mockLoadUserByUsername()
-  const sut = new DbAddAccount(loadUserByUsernameStub, hasherStub)
-  return { sut, loadUserByUsernameStub, hasherStub }
+  const addAccountRepositoryStub = mockAddAccountRepository()
+  const sut = new DbAddAccount(loadUserByUsernameStub, hasherStub, addAccountRepositoryStub)
+  return { sut, loadUserByUsernameStub, hasherStub, addAccountRepositoryStub }
 }
 
 describe('DbAddAccount UseCase', () => {
@@ -83,5 +95,11 @@ describe('DbAddAccount UseCase', () => {
     })
     const promise = sut.add(mockAccountParams())
     await expect(promise).rejects.toThrow()
+  })
+  test('Should call AddAccountRepository with correct values', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addAccountRepositoryStub, 'add')
+    await sut.add(mockAccountParams())
+    expect(addSpy).toHaveBeenCalledWith(Object.assign({}, mockAccountParams(), { password: 'hashed_password' }))
   })
 })
