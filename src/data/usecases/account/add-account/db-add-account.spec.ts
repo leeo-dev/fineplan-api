@@ -73,8 +73,15 @@ describe('DbAddAccount UseCase', () => {
   test('Should call hasher with correct password', async () => {
     const { sut, hasherStub } = makeSut()
     const hashSpy = jest.spyOn(hasherStub, 'hash')
-    const httpResponse = await sut.add(mockAccountParams())
-    console.log(httpResponse)
+    await sut.add(mockAccountParams())
     expect(hashSpy).toHaveBeenCalledWith(mockAccountParams().password)
+  })
+  test('Should throw if hash throw', async () => {
+    const { sut, hasherStub } = makeSut()
+    jest.spyOn(hasherStub, 'hash').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.add(mockAccountParams())
+    await expect(promise).rejects.toThrow()
   })
 })
