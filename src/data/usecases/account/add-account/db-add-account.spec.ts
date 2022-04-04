@@ -39,7 +39,7 @@ const mockHasher = (): Hasher => {
 const mockAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepository implements AddAccountRepository {
     async add (addAccount: AddAccountParams): Promise<string> {
-      return await Promise.resolve('hashed_password')
+      return await Promise.resolve('valid_id')
     }
   }
 
@@ -101,5 +101,13 @@ describe('DbAddAccount UseCase', () => {
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'add')
     await sut.add(mockAccountParams())
     expect(addSpy).toHaveBeenCalledWith(Object.assign({}, mockAccountParams(), { password: 'hashed_password' }))
+  })
+  test('Should throws if AddAccountRepository throws', async () => {
+    const { sut, addAccountRepositoryStub } = makeSut()
+    jest.spyOn(addAccountRepositoryStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const account = sut.add(mockAccountParams())
+    await expect(account).rejects.toThrow()
   })
 })
