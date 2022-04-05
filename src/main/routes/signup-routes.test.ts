@@ -1,7 +1,24 @@
 import request from 'supertest'
 import app from '@/main/config/app'
+import { MongoHelper } from '@/infra/helpers/mongo-helper'
+import { Collection } from 'mongodb'
+
+let accountCollection: Collection
 
 describe('SignUp Routes', () => {
+  beforeAll(async () => {
+    await MongoHelper.connect('mongodb://localhost:27017/finePlanApi')
+  })
+
+  afterAll(async () => {
+    await MongoHelper.disconnect()
+  })
+
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
+  })
+
   test('Should return an account on success', async () => {
     await request(app)
       .post('/api/signup')
