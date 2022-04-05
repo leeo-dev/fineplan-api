@@ -7,7 +7,7 @@ let accountCollection: Collection
 
 describe('SignUp Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect('mongodb://localhost:27017/finePlanApi')
+    await MongoHelper.connect('mongodb://localhost:27017/tests')
   })
 
   afterAll(async () => {
