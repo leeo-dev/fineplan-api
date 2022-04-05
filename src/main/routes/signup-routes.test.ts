@@ -1,7 +1,8 @@
 import request from 'supertest'
-import app from '@/main/config/app'
-import { MongoHelper } from '@/infra/helpers/mongo-helper'
+import app from '../config/app'
+import { MongoHelper } from '../../infra/helpers/mongo-helper'
 import { Collection } from 'mongodb'
+import { test, describe, beforeAll, beforeEach, afterAll } from '@jest/globals'
 
 let accountCollection: Collection
 

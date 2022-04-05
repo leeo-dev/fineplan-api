@@ -1,4 +1,4 @@
-
+import { expect, test, describe, jest } from '@jest/globals'
 import { DbAddAccount } from './db-add-account'
 import { LoadUserByUsernameRepository, Hasher, AccountModel, AddAccountParams, AddAccountRepository } from './db-add-account-protocols'
 
@@ -70,6 +70,7 @@ describe('DbAddAccount UseCase', () => {
     const account = await sut.add(mockAccountParams())
     expect(account).toBeNull()
   })
+
   test('Should throws if LoadUserByUsername throws', async () => {
     const { sut, loadUserByUsernameStub } = makeSut()
     jest.spyOn(loadUserByUsernameStub, 'loadByUsername').mockImplementationOnce(() => {

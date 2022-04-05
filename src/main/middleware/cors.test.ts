@@ -1,5 +1,6 @@
 import request from 'supertest'
-import app from '@/main/config/app'
+import app from '../config/app'
+import { test, describe } from '@jest/globals'
 
 describe('CORS Middleware', () => {
   test('Should enable Cors', async () => {

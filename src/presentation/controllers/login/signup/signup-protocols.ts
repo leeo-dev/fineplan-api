@@ -1,1 +1,1 @@
-export * from '@/presentation/protocols'
+export * from '../../../protocols'
