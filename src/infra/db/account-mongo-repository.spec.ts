@@ -1,6 +1,9 @@
 import { AddAccountParams } from '@/domain/usecases/account/add-account'
 import { AddAccountMongoRepository } from './account-mongo-repository'
 import { MongoHelper } from './../helpers/mongo-helper'
+import { Collection } from 'mongodb'
+
+let accountCollection: Collection
 
 const makeSut = (): AddAccountMongoRepository => {
   return new AddAccountMongoRepository()
@@ -20,10 +23,27 @@ describe('AddAccountMongoRepository', () => {
     await MongoHelper.disconnect()
   })
 
-  test('Should returns an id on success', async () => {
-    const sut = makeSut()
-    const id = await sut.add(mockAccountParams())
-    console.log(id)
-    expect(id).toBeTruthy()
+  beforeEach(async () => {
+    accountCollection = await MongoHelper.getCollection('accounts')
+    await accountCollection.deleteMany({})
+  })
+  describe('add()', () => {
+    test('Should returns an id on success', async () => {
+      const sut = makeSut()
+      const id = await sut.add(mockAccountParams())
+      console.log(id)
+      expect(id).toBeTruthy()
+    })
+  })
+  describe('loadByUsername()', () => {
+    test('should return and account on loadByUsername success', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(mockAccountParams())
+      const account = await sut.loadByUsername(mockAccountParams().username)
+      expect(account).toBeTruthy()
+      expect(account?.id).toBeTruthy()
+      expect(account?.username).toBeTruthy()
+      expect(account?.password).toBeTruthy()
+    })
   })
 })
