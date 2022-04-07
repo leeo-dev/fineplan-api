@@ -1,9 +1,7 @@
-import { MissingParamError } from '../../../../presentation/errors/missing-param-error'
-import { LengthParamError } from '../../../../presentation/errors/length-param-error'
-import { SignUpController } from '../../../../presentation/controllers/login/signup/signup'
-import { AddAccount, AddAccountParams } from '../../../../domain/usecases/account/add-account'
+import { SignUpController } from './signup'
+import { LengthParamError, UsernameInUseError, MissingParamError } from '../../../../presentation/errors'
+import { AddAccount, AddAccountParams } from './signup-protocols'
 import { forbidden, serverError, ok } from '../../../../presentation/helpers/http/http'
-import { UsernameInUseError } from '../../../../presentation/errors/username-in-use-error'
 import { expect, test, describe, jest } from '@jest/globals'
 
 const mockAccount = (): AddAccount => {
