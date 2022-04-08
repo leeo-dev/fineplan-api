@@ -1,8 +1,10 @@
 import { Controller, HttpRequest, HttpResponse } from './login-protocols'
-import { badRequest, ok } from '../../../helpers/http/http'
 import { MissingParamError } from '../../../errors'
+import { badRequest, ok } from '../../../helpers/http/http'
+import { Authentication } from './../../../../domain/usecases/account/authentication'
 
 export class LoginController implements Controller {
+  constructor (private readonly authentication: Authentication) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const requiredFields = ['username', 'password']
     for (const field of requiredFields) {
@@ -10,7 +12,8 @@ export class LoginController implements Controller {
         return badRequest(new MissingParamError(field))
       }
     }
-
+    const { username, password } = httpRequest.body
+    this.authentication.auth({ username, password })
     return ok('')
   }
 }
