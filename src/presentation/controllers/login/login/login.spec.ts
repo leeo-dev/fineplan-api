@@ -1,4 +1,5 @@
 import { LoginController } from './login'
+import { unauthorized } from '../../../helpers/http/http'
 import { MissingParamError } from '../../../errors'
 import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
 import { Authentication } from './../../../../domain/usecases/account/authentication'
@@ -6,7 +7,7 @@ import { expect, test, describe, jest } from '@jest/globals'
 
 const mockAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
-    async auth (data: AddAccountParams): Promise<string> {
+    async auth (data: AddAccountParams): Promise<string | null> {
       return await Promise.resolve('any_token')
     }
   }
@@ -59,5 +60,31 @@ describe('Login Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should Login Controller calls Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const addSpy = jest.spyOn(authenticationStub, 'auth')
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should Login Controller returns 401 if invalid credential is provided', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(Promise.resolve(null))
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(unauthorized())
   })
 })
