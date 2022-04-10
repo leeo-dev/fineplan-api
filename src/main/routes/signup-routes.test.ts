@@ -8,7 +8,7 @@ let accountCollection: Collection
 
 describe('SignUp Routes', () => {
   beforeAll(async () => {
-    await MongoHelper.connect('mongodb://localhost:27017/tests')
+    await MongoHelper.connect(process.env.MONGO_URL ?? '')
   })
 
   afterAll(async () => {

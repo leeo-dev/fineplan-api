@@ -18,7 +18,7 @@ const mockAccountParams = (): AddAccountParams => ({
 
 describe('AddAccountMongoRepository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect('mongodb://localhost:27017/finePlanApi')
+    await MongoHelper.connect(process.env.MONGO_URL ?? '')
   })
 
   afterAll(async () => {
