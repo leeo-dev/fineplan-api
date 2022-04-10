@@ -33,7 +33,6 @@ describe('AddAccountMongoRepository', () => {
     test('Should returns an id on success', async () => {
       const sut = makeSut()
       const id = await sut.add(mockAccountParams())
-      console.log(id)
       expect(id).toBeTruthy()
     })
   })

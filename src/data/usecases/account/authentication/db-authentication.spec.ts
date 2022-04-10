@@ -1,3 +1,4 @@
+import { HashComparer } from './../../../protocols/hash-comparer'
 import { DbAuthentication } from './db-authentication'
 import { AccountModel } from '../add-account/db-add-account-protocols'
 import { LoadUserByUsernameRepository } from './../../../protocols/load-user-by-username-repository'
@@ -12,22 +13,34 @@ const mockParams = (): AddAccountParams => ({
 const mockLoadUserByUsernameStub = (): LoadUserByUsernameRepository => {
   class LoadUserByUsernameStub implements LoadUserByUsernameRepository {
     async loadByUsername (username: string): Promise<AccountModel | null> {
-      return await Promise.resolve(Object.assign({}, mockParams(), { id: 'any_id' }))
+      return await Promise.resolve(Object.assign({}, mockParams(), { id: 'any_id', password: 'hashed_password' }))
     }
   }
 
   return new LoadUserByUsernameStub()
 }
 
+const mockHashCompareStub = (): HashComparer => {
+  class HashComparerStub implements HashComparer {
+    async compare (values: string, hash: string): Promise<boolean> {
+      return await Promise.resolve(true)
+    }
+  }
+
+  return new HashComparerStub()
+}
+
 type SutTypes = {
   sut: DbAuthentication
   loadUserByUsernameStub: LoadUserByUsernameRepository
+  hashCompareStub: HashComparer
 }
 
 const makeSut = (): SutTypes => {
   const loadUserByUsernameStub = mockLoadUserByUsernameStub()
-  const sut = new DbAuthentication(loadUserByUsernameStub)
-  return { sut, loadUserByUsernameStub }
+  const hashCompareStub = mockHashCompareStub()
+  const sut = new DbAuthentication(loadUserByUsernameStub, hashCompareStub)
+  return { sut, loadUserByUsernameStub, hashCompareStub }
 }
 
 describe('Authentication UseCase', () => {
@@ -52,5 +65,12 @@ describe('Authentication UseCase', () => {
     })
     const promise = sut.auth(mockParams())
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call HashComparer with correct password', async () => {
+    const { sut, hashCompareStub } = makeSut()
+    const compareSpy = jest.spyOn(hashCompareStub, 'compare')
+    await sut.auth(mockParams())
+    expect(compareSpy).toHaveBeenCalledWith(mockParams().password, 'hashed_password')
   })
 })
