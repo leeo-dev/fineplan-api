@@ -1,7 +1,7 @@
 import { HttpRequest, HttpResponse, Controller } from './signup-protocols'
 import { badRequest, forbidden, ok, serverError } from '../../../helpers/http/http'
 import { UsernameInUseError, MissingParamError, LengthParamError } from '../../../errors'
-import { AddAccount } from '@/domain/usecases/account/add-account'
+import { AddAccount } from '../../../../domain/usecases/account/add-account'
 export class SignUpController implements Controller {
   constructor (private readonly addAccount: AddAccount) {}
   async handle (httpRequest: HttpRequest): Promise <HttpResponse> {
