@@ -12,7 +12,7 @@ const mockParams = (): AddAccountParams => ({
 const mockLoadUserByUsernameStub = (): LoadUserByUsernameRepository => {
   class LoadUserByUsernameStub implements LoadUserByUsernameRepository {
     async loadByUsername (username: string): Promise<AccountModel | null> {
-      return await Promise.resolve(null)
+      return await Promise.resolve(Object.assign({}, mockParams(), { id: 'any_id' }))
     }
   }
 
@@ -36,5 +36,12 @@ describe('Authentication UseCase', () => {
     const loadByUsernameSpy = jest.spyOn(loadUserByUsernameStub, 'loadByUsername')
     sut.auth(mockParams())
     expect(loadByUsernameSpy).toHaveBeenCalledWith(mockParams().username)
+  })
+
+  test('Should DbAuthentication return null if LoadByUsernameRepository returns null', async () => {
+    const { sut, loadUserByUsernameStub } = makeSut()
+    jest.spyOn(loadUserByUsernameStub, 'loadByUsername').mockReturnValueOnce(Promise.resolve(null))
+    const accessToken = await sut.auth(mockParams())
+    expect(accessToken).toBeNull()
   })
 })
