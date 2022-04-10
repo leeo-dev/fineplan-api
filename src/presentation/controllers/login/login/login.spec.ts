@@ -1,5 +1,5 @@
 import { LoginController } from './login'
-import { unauthorized } from '../../../helpers/http/http'
+import { ok, unauthorized } from '../../../helpers/http/http'
 import { MissingParamError } from '../../../errors'
 import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
 import { Authentication } from './../../../../domain/usecases/account/authentication'
@@ -86,5 +86,17 @@ describe('Login Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(unauthorized())
+  })
+
+  test('Should LoginController return an access token on success', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(ok({ accessToken: 'any_token' }))
   })
 })
