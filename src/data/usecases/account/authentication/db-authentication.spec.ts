@@ -124,4 +124,9 @@ describe('Authentication UseCase', () => {
     const promise = sut.auth(mockParams())
     await expect(promise).rejects.toThrow()
   })
+  test('Should DbAuthentication returns an accessToken on success', async () => {
+    const { sut } = makeSut()
+    const accessToken = await sut.auth(mockParams())
+    expect(accessToken).toBe('any_token')
+  })
 })
