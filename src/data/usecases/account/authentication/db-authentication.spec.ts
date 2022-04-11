@@ -40,7 +40,7 @@ const mockHashCompareStub = (): HashComparer => {
 const mockEncrypterStub = (): Encrypter => {
   class EncrypterStub implements Encrypter {
     async encrypt (value: string): Promise<string> {
-      return await Promise.resolve('any_hash')
+      return await Promise.resolve('any_token')
     }
   }
 
@@ -114,5 +114,14 @@ describe('Authentication UseCase', () => {
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.auth(mockParams())
     expect(encryptSpy).toHaveBeenCalledWith(mockAccountModel().id)
+  })
+
+  test('Should DbAuthentication throws if Encrypter throw', async () => {
+    const { sut, encrypterStub } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.auth(mockParams())
+    await expect(promise).rejects.toThrow()
   })
 })
