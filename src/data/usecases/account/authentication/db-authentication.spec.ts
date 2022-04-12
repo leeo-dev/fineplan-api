@@ -39,8 +39,8 @@ const mockHashCompareStub = (): HashComparer => {
 
 const mockEncrypterStub = (): Encrypter => {
   class EncrypterStub implements Encrypter {
-    encrypt (value: string): string {
-      return 'any_token'
+    async encrypt (value: string): Promise<string> {
+      return await Promise.resolve('any_token')
     }
   }
 

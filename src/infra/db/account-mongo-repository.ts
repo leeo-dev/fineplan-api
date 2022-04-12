@@ -13,6 +13,7 @@ export class AddAccountMongoRepository implements AddAccountRepository, LoadUser
   async loadByUsername (username: string): Promise<AccountModel | null> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     const accountMongo = await accountCollection.findOne({ username })
-    return accountMongo && MongoHelper.map(accountMongo)
+    const account = accountMongo && MongoHelper.map(accountMongo)
+    return account
   }
 }
