@@ -84,7 +84,6 @@ describe('DbAddAccount UseCase', () => {
     const account = await sut.add(mockAccountParams())
     expect(account).toBeNull()
   })
-
   test('Should throws if LoadUserByUsername throws', async () => {
     const { sut, loadUserByUsernameStub } = makeSut()
     jest.spyOn(loadUserByUsernameStub, 'loadByUsername').mockImplementationOnce(() => {
@@ -121,17 +120,23 @@ describe('DbAddAccount UseCase', () => {
     const account = sut.add(mockAccountParams())
     await expect(account).rejects.toThrow()
   })
-
   test('Should call encrypter with correct values', async () => {
     const { sut, encrypterStub } = makeSut()
     const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
     await sut.add(mockAccountParams())
     expect(encryptSpy).toHaveBeenCalledWith('valid_id')
   })
-
-  test('Should encrypter returns an access token on success', async () => {
+  test('Should DbAddAccount returns an access token on success', async () => {
     const { sut } = makeSut()
     const accessToken = await sut.add(mockAccountParams())
     expect(accessToken).toEqual('any_token')
+  })
+  test('Should DbAuthentication throws if Encrypter throw', async () => {
+    const { sut, encrypterStub } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.add(mockAccountParams())
+    await expect(promise).rejects.toThrow()
   })
 })
