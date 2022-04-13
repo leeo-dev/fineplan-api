@@ -7,7 +7,7 @@ import { expect, test, describe, jest } from '@jest/globals'
 const mockAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
     async add (accountParams: AddAccountParams): Promise<string | null> {
-      return await Promise.resolve('valid_id')
+      return await Promise.resolve('valid_token')
     }
   }
 
@@ -121,6 +121,6 @@ describe('SignUp Controller', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(ok({ id: 'valid_id' }))
+    expect(httpResponse).toEqual(ok({ accessToken: 'valid_token' }))
   })
 })
