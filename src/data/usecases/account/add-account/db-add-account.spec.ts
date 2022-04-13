@@ -128,4 +128,10 @@ describe('DbAddAccount UseCase', () => {
     await sut.add(mockAccountParams())
     expect(encryptSpy).toHaveBeenCalledWith('valid_id')
   })
+
+  test('Should encrypter returns an access token on success', async () => {
+    const { sut } = makeSut()
+    const accessToken = await sut.add(mockAccountParams())
+    expect(accessToken).toEqual('any_token')
+  })
 })
