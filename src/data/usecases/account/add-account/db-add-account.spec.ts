@@ -1,3 +1,4 @@
+import { Encrypter } from './../../../protocols/encrypter'
 import { expect, test, describe, jest } from '@jest/globals'
 import { DbAddAccount } from './db-add-account'
 import { LoadUserByUsernameRepository, Hasher, AccountModel, AddAccountParams, AddAccountRepository } from './db-add-account-protocols'
@@ -32,6 +33,17 @@ const mockHasher = (): Hasher => {
 
   return new HasherStub()
 }
+
+const mockEncrypter = (): Encrypter => {
+  class EncrypterStub implements Encrypter {
+    async encrypt (value: string): Promise<string> {
+      return await Promise.resolve('any_token')
+    }
+  }
+
+  return new EncrypterStub()
+}
+
 const mockAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepository implements AddAccountRepository {
     async add (addAccount: AddAccountParams): Promise<string> {
@@ -47,14 +59,16 @@ type SutType = {
   loadUserByUsernameStub: LoadUserByUsernameRepository
   hasherStub: Hasher
   addAccountRepositoryStub: AddAccountRepository
+  encrypterStub: Encrypter
 }
 
 const makeSut = (): SutType => {
   const hasherStub = mockHasher()
   const loadUserByUsernameStub = mockLoadUserByUsername()
   const addAccountRepositoryStub = mockAddAccountRepository()
-  const sut = new DbAddAccount(loadUserByUsernameStub, hasherStub, addAccountRepositoryStub)
-  return { sut, loadUserByUsernameStub, hasherStub, addAccountRepositoryStub }
+  const encrypterStub = mockEncrypter()
+  const sut = new DbAddAccount(loadUserByUsernameStub, hasherStub, addAccountRepositoryStub, encrypterStub)
+  return { sut, loadUserByUsernameStub, hasherStub, addAccountRepositoryStub, encrypterStub }
 }
 
 describe('DbAddAccount UseCase', () => {
@@ -107,9 +121,11 @@ describe('DbAddAccount UseCase', () => {
     const account = sut.add(mockAccountParams())
     await expect(account).rejects.toThrow()
   })
-  test('Should DbAddAccount return an account id on success', async () => {
-    const { sut } = makeSut()
-    const id = await sut.add(mockAccountParams())
-    expect(id).toBe('valid_id')
+
+  test('Should call encrypter with correct values', async () => {
+    const { sut, encrypterStub } = makeSut()
+    const encryptSpy = jest.spyOn(encrypterStub, 'encrypt')
+    await sut.add(mockAccountParams())
+    expect(encryptSpy).toHaveBeenCalledWith('valid_id')
   })
 })
