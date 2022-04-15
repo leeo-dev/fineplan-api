@@ -23,7 +23,7 @@ describe('Deposit Controller', () => {
     const httpRequest = {
       body: {
         accountId: 'any_id',
-        amount: 'any_title',
+        amount: 'any_amount',
         date: 'any_date'
       }
     }
@@ -41,5 +41,17 @@ describe('Deposit Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('amount')))
+  })
+  test('Should return 400 if no title is provided', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        accountId: 'any_id',
+        title: 'any_title',
+        amount: 'any_amount'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('date')))
   })
 })
