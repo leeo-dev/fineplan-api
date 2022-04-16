@@ -1,6 +1,5 @@
-import { LengthParamError } from './../../../errors/length-param-error'
+import { LengthParamError, MissingParamError, InvalidParamError } from '@/presentation/errors'
 import { DepositController } from './deposit-controller'
-import { MissingParamError } from './../../../errors/missing-param-error'
 import { badRequest } from './../../../helpers/http/http'
 import { expect, test, describe } from '@jest/globals'
 
@@ -23,7 +22,6 @@ describe('Deposit Controller', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        accountId: 'any_id',
         amount: 'any_amount',
         date: 'any_date'
       }
@@ -35,7 +33,6 @@ describe('Deposit Controller', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        accountId: 'any_id',
         title: 'any_title',
         date: 'any_date'
       }
@@ -47,7 +44,6 @@ describe('Deposit Controller', () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        accountId: 'any_id',
         title: 'any_title',
         amount: 'any_amount'
       }
@@ -55,11 +51,10 @@ describe('Deposit Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('date')))
   })
-  test('Should return 400 if length of title is less than 3 character or more than 25 characters', async () => {
+  test('Should return 400 if length of title is not between 3 and 25 characters', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
-        accountId: 'any_id',
         title: 'an',
         amount: 'any_amount',
         date: 'any_date'
@@ -67,5 +62,17 @@ describe('Deposit Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new LengthParamError('title', 3, 25)))
+  })
+  test('Should return 400 if amount is not a number', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        title: 'any_title',
+        amount: 'invalid_type',
+        date: 'any_date'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('amount')))
   })
 })
