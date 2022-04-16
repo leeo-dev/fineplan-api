@@ -12,10 +12,12 @@ export class DepositController implements Controller {
       if (lengthField < 3 || lengthField > 25) return badRequest(new LengthParamError(field, 3, 25))
     }
 
-    const { amount } = httpRequest.body
+    const { amount, date } = httpRequest.body
 
     const isInvalidAmount = isNaN(amount)
     if (isInvalidAmount || amount <= 0) return badRequest(new InvalidParamError('amount'))
+    const isInvalidDate = String(new Date(date))
+    if (isInvalidDate === 'Invalid Date') return badRequest(new InvalidParamError('date'))
 
     return {
       statusCode: 200,
