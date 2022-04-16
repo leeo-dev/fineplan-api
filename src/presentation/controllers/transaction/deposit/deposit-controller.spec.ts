@@ -75,4 +75,16 @@ describe('Deposit Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('amount')))
   })
+  test('Should return 400 if amount less or equal than zero', async () => {
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: {
+        title: 'any_title',
+        amount: '0',
+        date: 'any_date'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('amount')))
+  })
 })
