@@ -1,8 +1,7 @@
-import { MissingParamError } from './../../../errors/missing-param-error'
 import { badRequest } from './../../../helpers/http/http'
 import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
 import { Controller } from './../../../protocols/controller'
-import { LengthParamError } from '@/presentation/errors'
+import { InvalidParamError, LengthParamError, MissingParamError } from '@/presentation/errors'
 export class DepositController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const requiredFields = ['title', 'amount', 'date']
@@ -11,6 +10,11 @@ export class DepositController implements Controller {
       if (!httpRequest.body[field]) return badRequest(new MissingParamError(field))
       if (lengthField < 3 || lengthField > 25) return badRequest(new LengthParamError(field, 3, 25))
     }
+
+    const { amount } = httpRequest.body
+
+    const isInvalidAmount = isNaN(amount)
+    if (isInvalidAmount) return badRequest(new InvalidParamError('amount'))
 
     return {
       statusCode: 200,
