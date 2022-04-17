@@ -19,11 +19,20 @@ describe('Transaction Routes', () => {
     accountCollection = await MongoHelper.getCollection('transactions')
     await accountCollection.deleteMany({})
   })
-
-  test('Should create a transaction on success', async () => {
-    await request(app)
-      .post('/api/transaction/deposit')
-      .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
-      .expect(204)
+  describe('Deposit', () => {
+    test('Should create a transaction on success', async () => {
+      await request(app)
+        .post('/api/transaction/deposit')
+        .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
+        .expect(204)
+    })
+  })
+  describe('Deposit', () => {
+    test('Should create a transaction on success', async () => {
+      await request(app)
+        .post('/api/transaction/withdraw')
+        .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
+        .expect(204)
+    })
   })
 })
