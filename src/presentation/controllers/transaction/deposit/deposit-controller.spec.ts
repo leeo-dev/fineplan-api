@@ -117,7 +117,7 @@ describe('Deposit Controller', () => {
       }
     }
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith(Object.assign({}, httpRequest.body, { date: new Date('2020-05-05') }))
   })
   test('Should return 204 on success', async () => {
     const { sut } = makeSut()

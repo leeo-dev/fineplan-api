@@ -20,7 +20,7 @@ export class DepositController implements Controller {
     if (isInvalidAmount || amount <= 0) return badRequest(new InvalidParamError('amount'))
     const isInvalidDate = String(new Date(date))
     if (isInvalidDate === 'Invalid Date') return badRequest(new InvalidParamError('date'))
-    this.addTransaction.add({ title, amount: Number(amount), date })
+    this.addTransaction.add({ title, amount: Number(amount), date: new Date(date) })
     return noContent()
   }
 }

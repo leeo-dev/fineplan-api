@@ -4,3 +4,4 @@ dist/
 husky/
 husky
 coverage/
+globalConfig.json
