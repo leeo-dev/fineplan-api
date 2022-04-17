@@ -4,11 +4,6 @@ import { DepositController } from './deposit-controller'
 import { badRequest } from './../../../helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
 
-// Title
-// amount
-// date
-// created_at
-
 const mockAddTransaction = (): AddTransaction => {
   class AddTransactionStub implements AddTransaction {
     async add (data: TransactionParam): Promise<void> {
