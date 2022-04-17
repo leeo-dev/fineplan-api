@@ -2,7 +2,7 @@ import { AddTransaction } from './../../../../domain/usecases/transaction/add-tr
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
 import { Controller } from './../../../protocols/controller'
-import { InvalidParamError, LengthParamError, MissingParamError } from '@/presentation/errors'
+import { InvalidParamError, LengthParamError, MissingParamError } from '../../../errors'
 export class DepositController implements Controller {
   constructor (private readonly addTransaction: AddTransaction) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {

@@ -1,5 +1,5 @@
 import { AddTransaction, TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
-import { LengthParamError, MissingParamError, InvalidParamError } from '@/presentation/errors'
+import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
 import { DepositController } from './deposit-controller'
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'

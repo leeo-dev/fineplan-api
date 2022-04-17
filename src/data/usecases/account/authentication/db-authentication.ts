@@ -1,7 +1,7 @@
 import { Encrypter } from './../../../protocols/encrypter'
 import { HashComparer } from './../../../protocols/hash-comparer'
 import { LoadUserByUsernameRepository } from './../../../protocols/load-user-by-username-repository'
-import { Authentication } from '@/domain/usecases/account/authentication'
+import { Authentication } from '../../../../domain/usecases/account/authentication'
 import { AddAccountParams } from '../add-account/db-add-account-protocols'
 
 export class DbAuthentication implements Authentication {

@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '@/main/config/app'
+import app from '../../main/config/app'
 import { test, describe } from '@jest/globals'
 
 describe('content-Type Middleware', () => {
