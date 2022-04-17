@@ -1,7 +1,7 @@
 import { AddAccountMongoRepository } from './account-mongo-repository'
-import { MongoHelper } from './../../helpers/mongo-helper'
 import { AddAccountParams } from './../../../domain/usecases/account/add-account'
 
+import { MongoHelper } from './../../helpers/mongo-helper'
 import { Collection } from 'mongodb'
 import { expect, test, describe, beforeAll, afterAll, beforeEach } from '@jest/globals'
 
