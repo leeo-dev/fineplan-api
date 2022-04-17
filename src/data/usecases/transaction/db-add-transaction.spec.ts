@@ -31,4 +31,12 @@ describe('DbAddTransaction UseCase', () => {
     await sut.add({ title: 'any_name', amount: 250, date: new Date('2020-05-05'), created_at: new Date() })
     expect(addSpy).toHaveBeenCalledWith({ title: 'any_name', amount: 250, date: new Date('2020-05-05'), created_at: new Date() })
   })
+  test('Should throws if AddTransactionRepository throws', async () => {
+    const { sut, addTransactionRepositoryStub } = makeSut()
+    jest.spyOn(addTransactionRepositoryStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.add({ title: 'any_name', amount: 250, date: new Date('2020-05-05'), created_at: new Date() })
+    await expect(promise).rejects.toThrow()
+  })
 })
