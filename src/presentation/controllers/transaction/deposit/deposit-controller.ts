@@ -1,5 +1,5 @@
 import { AddTransaction } from './../../../../domain/usecases/transaction/add-transaction'
-import { badRequest } from './../../../helpers/http/http'
+import { badRequest, noContent } from './../../../helpers/http/http'
 import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
 import { Controller } from './../../../protocols/controller'
 import { InvalidParamError, LengthParamError, MissingParamError } from '@/presentation/errors'
@@ -21,9 +21,6 @@ export class DepositController implements Controller {
     const isInvalidDate = String(new Date(date))
     if (isInvalidDate === 'Invalid Date') return badRequest(new InvalidParamError('date'))
     this.addTransaction.add({ title, amount: Number(amount), date })
-    return {
-      statusCode: 200,
-      body: {}
-    }
+    return noContent()
   }
 }
