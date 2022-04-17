@@ -1,20 +1,32 @@
+import { AddTransaction, TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
 import { LengthParamError, MissingParamError, InvalidParamError } from '@/presentation/errors'
 import { DepositController } from './deposit-controller'
 import { badRequest } from './../../../helpers/http/http'
-import { expect, test, describe } from '@jest/globals'
+import { expect, test, describe, jest } from '@jest/globals'
 
 // Title
 // amount
 // date
 // created_at
 
+const mockAddTransaction = (): AddTransaction => {
+  class AddTransactionStub implements AddTransaction {
+    async add (data: TransactionParam): Promise<void> {
+
+    }
+  }
+  return new AddTransactionStub()
+}
+
 type SutTypes = {
   sut: DepositController
+  addTransactionStub: AddTransaction
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new DepositController()
-  return { sut }
+  const addTransactionStub = mockAddTransaction()
+  const sut = new DepositController(addTransactionStub)
+  return { sut, addTransactionStub }
 }
 
 describe('Deposit Controller', () => {
@@ -98,5 +110,18 @@ describe('Deposit Controller', () => {
     }
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new InvalidParamError('date')))
+  })
+  test('Should call AddTransaction with correct values', async () => {
+    const { sut, addTransactionStub } = makeSut()
+    const addSpy = jest.spyOn(addTransactionStub, 'add')
+    const httpRequest = {
+      body: {
+        title: 'any_title',
+        amount: 2345,
+        date: '2020-05-05'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
