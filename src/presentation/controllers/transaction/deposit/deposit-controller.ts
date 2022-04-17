@@ -1,8 +1,10 @@
+import { AddTransaction } from './../../../../domain/usecases/transaction/add-transaction'
 import { badRequest } from './../../../helpers/http/http'
 import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
 import { Controller } from './../../../protocols/controller'
 import { InvalidParamError, LengthParamError, MissingParamError } from '@/presentation/errors'
 export class DepositController implements Controller {
+  constructor (private readonly addTransaction: AddTransaction) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const requiredFields = ['title', 'date', 'amount']
     for (const field of requiredFields) {
@@ -12,13 +14,13 @@ export class DepositController implements Controller {
       if (lengthField < 3 || lengthField > 25) return badRequest(new LengthParamError(field, 3, 25))
     }
 
-    const { amount, date } = httpRequest.body
+    const { title, amount, date } = httpRequest.body
 
     const isInvalidAmount = isNaN(amount)
     if (isInvalidAmount || amount <= 0) return badRequest(new InvalidParamError('amount'))
     const isInvalidDate = String(new Date(date))
     if (isInvalidDate === 'Invalid Date') return badRequest(new InvalidParamError('date'))
-
+    this.addTransaction.add({ title, amount: Number(amount), date })
     return {
       statusCode: 200,
       body: {}
