@@ -1,4 +1,4 @@
-import { AddAccountMongoRepository } from '../../infra/db/account-mongo-repository'
+import { AddAccountMongoRepository } from '../../infra/db/account/account-mongo-repository'
 import { DbAddAccount } from '../../data/usecases/account/add-account/db-add-account'
 import { SignUpController } from '../../presentation/controllers/login/signup/signup'
 import { BcryptAdapter } from '../../infra/cryptography/bcrypt-adapter'
