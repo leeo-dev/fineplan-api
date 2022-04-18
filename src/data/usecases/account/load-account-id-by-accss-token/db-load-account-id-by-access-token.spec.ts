@@ -68,4 +68,12 @@ describe('DbLoadAccountIdByAccessToken', () => {
     await sut.loadIdByAccessToken('any_accessToken')
     expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
   })
+  test('Should throw if LoadAccountById throws', async () => {
+    const { sut, loadAccountByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByIdRepositoryStub, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.loadIdByAccessToken('any_accessToken')
+    await expect(promise).rejects.toThrow()
+  })
 })
