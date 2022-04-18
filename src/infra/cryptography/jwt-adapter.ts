@@ -9,7 +9,7 @@ export class JwtAdapter implements Encrypter, Decrypter {
   }
 
   decrypt (accessToken: string): string | null {
-    jwt.verify(accessToken, this.secret)
-    return null
+    const result: any = jwt.verify(accessToken, this.secret)
+    return result
   }
 }
