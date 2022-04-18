@@ -12,7 +12,7 @@ const mockHttpRequest = (): HttpRequest => ({
 
 const mockLoadAccountIdByAccessToken = (): LoadAccountIdByAccessToken => {
   class LoadAccountIdByAccessTokenStub implements LoadAccountIdByAccessToken {
-    async loadById (accessToken: string): Promise<string | null> {
+    async loadIdByAccessToken (accessToken: string): Promise<string | null> {
       return await Promise.resolve('any_id')
     }
   }
@@ -39,19 +39,19 @@ describe('Auth Middleware', () => {
   })
   test('Should call LoadAccountIdByAccessToken with correct accessToken', async () => {
     const { sut, loadAccountIdByAccessTokenStub } = makeSut()
-    const spyLoadById = jest.spyOn(loadAccountIdByAccessTokenStub, 'loadById')
+    const spyLoadById = jest.spyOn(loadAccountIdByAccessTokenStub, 'loadIdByAccessToken')
     await sut.handle(mockHttpRequest())
     expect(spyLoadById).toHaveBeenCalledWith(mockHttpRequest().headers['x-access-token'])
   })
   test('Should call LoadAccountIdByAccessToken with correct accessToken', async () => {
     const { sut, loadAccountIdByAccessTokenStub } = makeSut()
-    const spyLoadById = jest.spyOn(loadAccountIdByAccessTokenStub, 'loadById')
+    const spyLoadById = jest.spyOn(loadAccountIdByAccessTokenStub, 'loadIdByAccessToken')
     await sut.handle(mockHttpRequest())
     expect(spyLoadById).toHaveBeenCalledWith(mockHttpRequest().headers['x-access-token'])
   })
   test('Should return 403 if LoadAccountIdByAccessToken returns null', async () => {
     const { sut, loadAccountIdByAccessTokenStub } = makeSut()
-    jest.spyOn(loadAccountIdByAccessTokenStub, 'loadById').mockReturnValueOnce(Promise.resolve(null))
+    jest.spyOn(loadAccountIdByAccessTokenStub, 'loadIdByAccessToken').mockReturnValueOnce(Promise.resolve(null))
     const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
@@ -62,7 +62,7 @@ describe('Auth Middleware', () => {
   })
   test('Should return 500 if LoadAccountIdByAccessToken throws', async () => {
     const { sut, loadAccountIdByAccessTokenStub } = makeSut()
-    jest.spyOn(loadAccountIdByAccessTokenStub, 'loadById').mockImplementationOnce(() => {
+    jest.spyOn(loadAccountIdByAccessTokenStub, 'loadIdByAccessToken').mockImplementationOnce(() => {
       throw new Error()
     })
     const httpResponse = await sut.handle(mockHttpRequest())
