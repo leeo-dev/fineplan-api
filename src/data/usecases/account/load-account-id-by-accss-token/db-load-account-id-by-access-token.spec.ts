@@ -1,6 +1,14 @@
 import { DbLoadAccountIdByAccessToken } from './db-load-account-id-by-access-token'
+import { LoadAccountByIdRepository } from './../../../protocols/load-account-by-id-repository'
 import { Decrypter } from './../../../protocols/decrypter'
 import { expect, test, describe, jest } from '@jest/globals'
+import { AccountModel } from '../add-account/db-add-account-protocols'
+
+const mockAccount = (): AccountModel => ({
+  id: 'any_id',
+  username: 'any_username',
+  password: 'any_password'
+})
 
 const mockDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
@@ -10,16 +18,26 @@ const mockDecrypter = (): Decrypter => {
   }
   return new DecrypterStub()
 }
+const mockLoadAccountByIdRepositoryStub = (): LoadAccountByIdRepository => {
+  class LoadAccountByIdRepositoryStub implements LoadAccountByIdRepository {
+    async loadById (id: string): Promise<AccountModel | null> {
+      return mockAccount()
+    }
+  }
+  return new LoadAccountByIdRepositoryStub()
+}
 
 type SutTypes = {
   sut: DbLoadAccountIdByAccessToken
   decrypterStub: Decrypter
+  loadAccountByIdRepositoryStub: LoadAccountByIdRepository
 }
 
 const makeSut = (): SutTypes => {
+  const loadAccountByIdRepositoryStub = mockLoadAccountByIdRepositoryStub()
   const decrypterStub = mockDecrypter()
-  const sut = new DbLoadAccountIdByAccessToken(decrypterStub)
-  return { sut, decrypterStub }
+  const sut = new DbLoadAccountIdByAccessToken(decrypterStub, loadAccountByIdRepositoryStub)
+  return { sut, decrypterStub, loadAccountByIdRepositoryStub }
 }
 describe('DbLoadAccountIdByAccessToken', () => {
   test('Should call decrypter with correct token', async () => {
@@ -34,6 +52,7 @@ describe('DbLoadAccountIdByAccessToken', () => {
     const id = await sut.loadIdByAccessToken('any_accessToken')
     expect(id).toBeNull()
   })
+
   test('Should throw if decrypter trows', async () => {
     const { sut, decrypterStub } = makeSut()
     jest.spyOn(decrypterStub, 'decrypt').mockImplementationOnce(() => {
@@ -41,5 +60,12 @@ describe('DbLoadAccountIdByAccessToken', () => {
     })
     const promise = sut.loadIdByAccessToken('any_accessToken')
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call LoadAccountById with correct id', async () => {
+    const { sut, loadAccountByIdRepositoryStub } = makeSut()
+    const loadByIdSpy = jest.spyOn(loadAccountByIdRepositoryStub, 'loadById')
+    await sut.loadIdByAccessToken('any_accessToken')
+    expect(loadByIdSpy).toHaveBeenCalledWith('any_id')
   })
 })
