@@ -1,9 +1,11 @@
+import { LoadAccountByIdRepository } from '@/data/protocols/load-account-by-id-repository'
+import { ObjectId } from 'mongodb'
 import { AddAccountRepository } from '../../../data/protocols/add-account-repository'
 import { LoadUserByUsernameRepository } from '../../../data/protocols/load-user-by-username-repository'
 import { AccountModel } from '../../../domain/models/account'
 import { AddAccountParams } from '../../../domain/usecases/account/add-account'
 import { MongoHelper } from '../../helpers/mongo-helper'
-export class AddAccountMongoRepository implements AddAccountRepository, LoadUserByUsernameRepository {
+export class AddAccountMongoRepository implements AddAccountRepository, LoadUserByUsernameRepository, LoadAccountByIdRepository {
   async add (addAccount: AddAccountParams): Promise<string> {
     const accountCollection = await MongoHelper.getCollection('accounts')
     const accountId = await accountCollection.insertOne(addAccount)
@@ -15,5 +17,11 @@ export class AddAccountMongoRepository implements AddAccountRepository, LoadUser
     const accountMongo = await accountCollection.findOne({ username })
     const account = accountMongo && MongoHelper.map(accountMongo)
     return account
+  }
+
+  async loadById (id: string): Promise<AccountModel | null> {
+    const accountCollection = await MongoHelper.getCollection('accounts')
+    const accountMongo = await accountCollection.findOne({ _id: new ObjectId(id) })
+    return accountMongo ? MongoHelper.map(accountMongo) : null
   }
 }
