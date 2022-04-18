@@ -47,4 +47,16 @@ describe('AddAccountMongoRepository', () => {
       expect(account?.password).toBeTruthy()
     })
   })
+  describe('loadById()', () => {
+    test('should return and account on loadById success', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(mockAccountParams())
+      const accountMongo = await sut.loadByUsername(mockAccountParams().username)
+      const account = await sut.loadById(String(accountMongo?.id))
+      expect(account).toBeTruthy()
+      expect(account?.id).toBeTruthy()
+      expect(account?.username).toBeTruthy()
+      expect(account?.password).toBeTruthy()
+    })
+  })
 })
