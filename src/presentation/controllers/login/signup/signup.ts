@@ -20,8 +20,8 @@ export class SignUpController implements Controller {
       const accessToken = await this.addAccount.add({ username, password })
       if (!accessToken) return forbidden(new UsernameInUseError())
       return ok({ accessToken })
-    } catch (error) {
-      return serverError()
+    } catch (error: any) {
+      return serverError(error)
     }
   }
 }

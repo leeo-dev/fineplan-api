@@ -110,7 +110,7 @@ describe('SignUp Controller', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(serverError())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
   test('should SignUp Controller returns 200 on success', async () => {
     const { sut } = makeSut()
