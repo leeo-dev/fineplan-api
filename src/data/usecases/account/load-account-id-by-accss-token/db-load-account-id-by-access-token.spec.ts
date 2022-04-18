@@ -34,4 +34,12 @@ describe('DbLoadAccountIdByAccessToken', () => {
     const id = await sut.loadIdByAccessToken('any_accessToken')
     expect(id).toBeNull()
   })
+  test('Should throw if decrypter trows', async () => {
+    const { sut, decrypterStub } = makeSut()
+    jest.spyOn(decrypterStub, 'decrypt').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.loadIdByAccessToken('any_accessToken')
+    await expect(promise).rejects.toThrow()
+  })
 })
