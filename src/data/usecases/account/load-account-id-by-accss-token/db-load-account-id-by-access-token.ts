@@ -3,7 +3,7 @@ import { LoadAccountIdByAccessToken } from './../../../../domain/usecases/accoun
 export class DbLoadAccountIdByAccessToken implements LoadAccountIdByAccessToken {
   constructor (private readonly decrypter: Decrypter) {}
   async loadIdByAccessToken (accessToken: string): Promise<string | null> {
-    this.decrypter.decrypt(accessToken)
-    return await Promise.resolve(null)
+    const id = this.decrypter.decrypt(accessToken)
+    return await Promise.resolve(id)
   }
 }
