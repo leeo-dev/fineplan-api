@@ -1,7 +1,8 @@
+import { serverError } from './../helpers/http/http'
 import { AuthMiddleware } from './auth-middleware'
 import { HttpRequest } from './../protocols/http'
 import { forbidden, ok } from '../helpers/http/http'
-import { AccessDeniedError } from '../errors/access-denied-error'
+import { AccessDeniedError } from '../errors'
 import { LoadAccountIdByAccessToken } from './../../domain/usecases/account/load-account-id-by-access-token'
 import { expect, test, describe, jest } from '@jest/globals'
 
@@ -60,5 +61,13 @@ describe('Auth Middleware', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(ok({ accountId: 'any_id' }))
+  })
+  test('Should return 500 if LoadAccountIdByAccessToken throws', async () => {
+    const { sut, loadAccountIdByAccessTokenStub } = makeSut()
+    jest.spyOn(loadAccountIdByAccessTokenStub, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(mockHttpRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
