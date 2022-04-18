@@ -1,4 +1,4 @@
-import { forbidden } from './../helpers/http/http'
+import { forbidden, ok } from './../helpers/http/http'
 import { HttpRequest, HttpResponse } from '../protocols'
 import { Middleware } from '../protocols/middleware'
 import { AccessDeniedError } from '../errors/access-denied-error'
@@ -11,9 +11,6 @@ export class AuthMiddleware implements Middleware {
     if (!accessToken) return forbidden(new AccessDeniedError())
     const id = await this.loadAccountIdByAccessToken.loadById(accessToken)
     if (!id) return forbidden(new AccessDeniedError())
-    return {
-      statusCode: 200,
-      body: ''
-    }
+    return ok({ accountId: id })
   }
 }
