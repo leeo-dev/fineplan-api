@@ -1,9 +1,7 @@
-import { serverError } from './../helpers/http/http'
 import { AuthMiddleware } from './auth-middleware'
-import { HttpRequest } from './../protocols/http'
-import { forbidden, ok } from '../helpers/http/http'
+import { HttpRequest, LoadAccountIdByAccessToken } from './auth-middleware-protocols'
+import { forbidden, ok, serverError } from '../helpers/http/http'
 import { AccessDeniedError } from '../errors'
-import { LoadAccountIdByAccessToken } from './../../domain/usecases/account/load-account-id-by-access-token'
 import { expect, test, describe, jest } from '@jest/globals'
 
 const mockHttpRequest = (): HttpRequest => ({
