@@ -1,8 +1,15 @@
+import { AccountModel } from './../../domain/models/account'
 import { AuthMiddleware } from './auth-middleware'
-import { HttpRequest, LoadAccountIdByAccessToken } from './auth-middleware-protocols'
+import { HttpRequest, LoadAccountByAccessToken } from './auth-middleware-protocols'
 import { forbidden, ok, serverError } from '../helpers/http/http'
 import { AccessDeniedError } from '../errors'
 import { expect, test, describe, jest } from '@jest/globals'
+
+const mockAccount = (): AccountModel => ({
+  id: 'any_id',
+  username: 'any_username',
+  password: 'any_password'
+})
 
 const mockHttpRequest = (): HttpRequest => ({
   headers: {
@@ -10,10 +17,10 @@ const mockHttpRequest = (): HttpRequest => ({
   }
 })
 
-const mockLoadAccountIdByAccessToken = (): LoadAccountIdByAccessToken => {
-  class LoadAccountIdByAccessTokenStub implements LoadAccountIdByAccessToken {
-    async loadIdByAccessToken (accessToken: string): Promise<string | null> {
-      return await Promise.resolve('any_id')
+const mockLoadAccountIdByAccessToken = (): LoadAccountByAccessToken => {
+  class LoadAccountIdByAccessTokenStub implements LoadAccountByAccessToken {
+    async loadIdByAccessToken (accessToken: string): Promise<AccountModel | null> {
+      return await Promise.resolve(mockAccount())
     }
   }
 
@@ -22,7 +29,7 @@ const mockLoadAccountIdByAccessToken = (): LoadAccountIdByAccessToken => {
 
 type SutTypes = {
   sut: AuthMiddleware
-  loadAccountIdByAccessTokenStub: LoadAccountIdByAccessToken
+  loadAccountIdByAccessTokenStub: LoadAccountByAccessToken
 }
 
 const makeSut = (): SutTypes => {
@@ -55,10 +62,10 @@ describe('Auth Middleware', () => {
     const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
   })
-  test('Should return 200 if LoadAccountIdByAccessToken returns an id', async () => {
+  test('Should return 200 if LoadAccountIdByAccessToken returns an account', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(mockHttpRequest())
-    expect(httpResponse).toEqual(ok({ accountId: 'any_id' }))
+    expect(httpResponse).toEqual(ok(mockAccount()))
   })
   test('Should return 500 if LoadAccountIdByAccessToken throws', async () => {
     const { sut, loadAccountIdByAccessTokenStub } = makeSut()
