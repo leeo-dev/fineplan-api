@@ -4,7 +4,7 @@ import { expect, test, describe, jest } from '@jest/globals'
 
 const mockDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
-    decrypt (accessToken: string): string {
+    decrypt (accessToken: string): string | null {
       return 'any_id'
     }
   }
@@ -27,5 +27,11 @@ describe('DbLoadAccountIdByAccessToken', () => {
     const decryptSpy = jest.spyOn(decrypterStub, 'decrypt')
     await sut.loadIdByAccessToken('any_accessToken')
     expect(decryptSpy).toHaveBeenCalledWith('any_accessToken')
+  })
+  test('Should return if decrypter returns null', async () => {
+    const { sut, decrypterStub } = makeSut()
+    jest.spyOn(decrypterStub, 'decrypt').mockReturnValueOnce(null)
+    const id = await sut.loadIdByAccessToken('any_accessToken')
+    expect(id).toBeNull()
   })
 })
