@@ -1,3 +1,5 @@
 const jwt = require('jsonwebtoken')
-const accessToken = jwt.sign('meu nome', 'anySecret')
+const token = jwt.sign({ id: 'any_id' }, 'anySecret', { expiresIn: '2 days' })
+console.log(token)
+const accessToken = jwt.verify(token, 'anySecret')
 console.log(accessToken)

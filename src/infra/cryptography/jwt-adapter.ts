@@ -1,4 +1,4 @@
-import { Decrypter } from './../../data/protocols/decrypter'
+import { Decrypter, DecrypterParam } from './../../data/protocols/decrypter'
 import { Encrypter } from './../../data/protocols/encrypter'
 import jwt from 'jsonwebtoken'
 export class JwtAdapter implements Encrypter, Decrypter {
@@ -8,7 +8,7 @@ export class JwtAdapter implements Encrypter, Decrypter {
     return token
   }
 
-  decrypt (accessToken: string): string | null {
+  decrypt (accessToken: string): DecrypterParam | null {
     const result: any = jwt.verify(accessToken, this.secret)
     return result
   }

@@ -1,6 +1,6 @@
 import { DbLoadAccountByAccessToken } from './db-load-account-by-access-token'
 import { LoadAccountByIdRepository } from '../../../protocols/load-account-by-id-repository'
-import { Decrypter } from '../../../protocols/decrypter'
+import { Decrypter, DecrypterParam } from '../../../protocols/decrypter'
 import { expect, test, describe, jest } from '@jest/globals'
 import { AccountModel } from '../add-account/db-add-account-protocols'
 
@@ -12,8 +12,8 @@ const mockAccount = (): AccountModel => ({
 
 const mockDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
-    decrypt (accessToken: string): string | null {
-      return 'any_id'
+    decrypt (accessToken: string): DecrypterParam | null {
+      return { id: 'any_id', iat: 20395823 }
     }
   }
   return new DecrypterStub()
