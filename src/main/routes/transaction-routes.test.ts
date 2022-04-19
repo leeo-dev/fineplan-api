@@ -24,10 +24,10 @@ describe('Transaction Routes', () => {
       await request(app)
         .post('/api/transaction/deposit')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
-        .expect(204)
+        .expect(403)
     })
   })
-  describe('Deposit', () => {
+  describe('Withdraw', () => {
     test('Should create a transaction on success', async () => {
       await request(app)
         .post('/api/transaction/withdraw')
