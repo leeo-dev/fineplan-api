@@ -4,6 +4,14 @@ import { LengthParamError, MissingParamError, InvalidParamError } from '../../..
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
 
+const mockTransaction = (type: string): TransactionParam => ({
+  title: 'any_title',
+  amount: type === 'deposit' ? 250 : -250,
+  date: new Date('2020-05-05'),
+  type,
+  user_id: 'any_id'
+})
+
 const mockAddTransaction = (): AddTransaction => {
   class AddTransactionStub implements AddTransaction {
     async add (data: TransactionParam): Promise<void> {
@@ -112,20 +120,27 @@ describe('Deposit Controller', () => {
     const httpRequest = {
       body: {
         title: 'any_title',
-        amount: 2345,
+        amount: 250,
         date: '2020-05-05'
+      },
+      user: {
+        id: 'any_id'
       }
+
     }
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(Object.assign({}, httpRequest.body, { amount: (httpRequest.body.amount * -1), date: new Date('2020-05-05') }))
+    expect(addSpy).toHaveBeenCalledWith(mockTransaction('withdraw'))
   })
   test('Should return 204 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
         title: 'any_title',
-        amount: 2345,
+        amount: 250,
         date: '2020-05-05'
+      },
+      user: {
+        id: 'any_id'
       }
     }
     const httpResponse = await sut.handle(httpRequest)

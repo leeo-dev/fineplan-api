@@ -1,3 +1,4 @@
+import { TransactionParam } from './../../../domain/usecases/transaction/add-transaction'
 import { TransactionMongoRepository } from './transaction-mongo-repository'
 import { MongoHelper } from './../../helpers/mongo-helper'
 import { Collection } from 'mongodb'
@@ -8,6 +9,15 @@ import { expect, test, describe, beforeAll, afterAll, beforeEach } from '@jest/g
 const makeSut = (): TransactionMongoRepository => {
   return new TransactionMongoRepository()
 }
+
+const mockTransaction = (type: string): TransactionParam => ({
+  title: 'any_title',
+  amount: 250,
+  date: new Date('2020-05-05'),
+  created_at: new Date(),
+  type,
+  user_id: 'any_id'
+})
 
 describe('Name of the group', () => {
   let transactionCollection: Collection
@@ -27,7 +37,7 @@ describe('Name of the group', () => {
   })
   test('Should TransactionMongoRepository insert a transaction successfully', async () => {
     const sut = makeSut()
-    await sut.add({ title: 'any_title', amount: 250, date: new Date('2020-05-05'), created_at: new Date() })
+    await sut.add(mockTransaction('deposit'))
     const transactionMongo = await transactionCollection.findOne({ title: 'any_title' })
     const transaction = MongoHelper.map(transactionMongo)
     expect(transaction).toBeTruthy()

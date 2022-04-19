@@ -15,12 +15,13 @@ export class WithdrawController implements Controller {
     }
 
     const { title, amount, date } = httpRequest.body
+    const { user } = httpRequest
 
     const isInvalidAmount = isNaN(amount)
     if (isInvalidAmount || amount <= 0) return badRequest(new InvalidParamError('amount'))
     const isInvalidDate = String(new Date(date))
     if (isInvalidDate === 'Invalid Date') return badRequest(new InvalidParamError('date'))
-    this.addTransaction.add({ title, amount: Number(amount * -1), date: new Date(date) })
+    this.addTransaction.add({ title, amount: Number(amount * -1), date: new Date(date), type: 'withdraw', user_id: String(user?.id) })
     return noContent()
   }
 }

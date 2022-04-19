@@ -2,8 +2,8 @@ import { AddTransaction, TransactionParam } from './../../../../domain/usecases/
 import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
 import { DepositController } from './deposit-controller'
 import { badRequest, noContent } from './../../../helpers/http/http'
-import { expect, test, describe, jest } from '@jest/globals'
-
+import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
+import MockDate from 'mockdate'
 const mockAddTransaction = (): AddTransaction => {
   class AddTransactionStub implements AddTransaction {
     async add (data: TransactionParam): Promise<void> {
@@ -24,7 +24,17 @@ const makeSut = (): SutTypes => {
   return { sut, addTransactionStub }
 }
 
+const mockTransaction = (type: string): TransactionParam => ({
+  title: 'any_title',
+  amount: type === 'deposit' ? 250 : -250,
+  date: new Date('2020-05-05'),
+  type,
+  user_id: 'any_id'
+})
+
 describe('Deposit Controller', () => {
+  beforeAll(() => { MockDate.set(new Date()) })
+  afterAll(() => { MockDate.reset() })
   test('Should return 400 if no title is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
@@ -99,7 +109,7 @@ describe('Deposit Controller', () => {
     const httpRequest = {
       body: {
         title: 'any_title',
-        amount: '2345',
+        amount: '250',
         date: 'any_date'
       }
     }
@@ -112,19 +122,22 @@ describe('Deposit Controller', () => {
     const httpRequest = {
       body: {
         title: 'any_title',
-        amount: 2345,
-        date: '2020-05-05'
+        amount: 250,
+        date: new Date('2020-05-05')
+      },
+      user: {
+        id: 'any_id'
       }
     }
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(Object.assign({}, httpRequest.body, { date: new Date('2020-05-05') }))
+    expect(addSpy).toHaveBeenCalledWith(mockTransaction('deposit'))
   })
   test('Should return 204 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
         title: 'any_title',
-        amount: 2345,
+        amount: 250,
         date: '2020-05-05'
       }
     }
