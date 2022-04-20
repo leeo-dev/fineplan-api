@@ -1,4 +1,4 @@
-import { Encrypter } from './../../../protocols/encrypter'
+import { Encrypter } from './../../../protocols/cryptography/encrypter'
 import { AddAccountRepository, Hasher, LoadUserByUsernameRepository, AddAccount, AddAccountParams } from './db-add-account-protocols'
 
 export class DbAddAccount implements AddAccount {

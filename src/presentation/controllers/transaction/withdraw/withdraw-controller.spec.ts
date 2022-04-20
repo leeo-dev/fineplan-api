@@ -1,5 +1,5 @@
 import { WithdrawController } from './withdraw-controller'
-import { AddTransaction, TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
+import { AddTransaction, TransactionParam } from './withdraw-controller-protocols'
 import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'

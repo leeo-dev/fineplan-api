@@ -1,5 +1,4 @@
-import { TransactionParam } from '../../../domain/usecases/transaction/add-transaction'
-import { AddTransactionRepository } from './../../../data/protocols/add-transaction-repository'
+import { TransactionParam, AddTransactionRepository } from './transaction-mongo-repository-protocols'
 import { MongoHelper } from './../../helpers/mongo-helper'
 
 export class TransactionMongoRepository implements AddTransactionRepository {

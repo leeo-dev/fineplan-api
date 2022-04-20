@@ -1,8 +1,6 @@
 import { DbLoadAccountByAccessToken } from './db-load-account-by-access-token'
-import { LoadAccountByIdRepository } from '../../../protocols/load-account-by-id-repository'
-import { Decrypter, DecrypterParam } from '../../../protocols/decrypter'
+import { LoadAccountByIdRepository, Decrypter, DecrypterParam, AccountModel } from './db-load-account-by-access-token-protocols'
 import { expect, test, describe, jest } from '@jest/globals'
-import { AccountModel } from '../add-account/db-add-account-protocols'
 
 const mockAccount = (): AccountModel => ({
   id: 'any_id',

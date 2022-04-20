@@ -1,10 +1,7 @@
-import { LoadAccountByIdRepository } from '@/data/protocols/load-account-by-id-repository'
-import { ObjectId } from 'mongodb'
-import { AddAccountRepository } from '../../../data/protocols/add-account-repository'
-import { LoadUserByUsernameRepository } from '../../../data/protocols/load-user-by-username-repository'
-import { AccountModel } from '../../../domain/models/account'
-import { AddAccountParams } from '../../../domain/usecases/account/add-account'
+import { LoadAccountByIdRepository, AddAccountRepository, LoadUserByUsernameRepository, AccountModel, AddAccountParams } from './account-mongo-repository-protocols'
 import { MongoHelper } from '../../helpers/mongo-helper'
+import { ObjectId } from 'mongodb'
+
 export class AddAccountMongoRepository implements AddAccountRepository, LoadUserByUsernameRepository, LoadAccountByIdRepository {
   async add (addAccount: AddAccountParams): Promise<string> {
     const accountCollection = await MongoHelper.getCollection('accounts')

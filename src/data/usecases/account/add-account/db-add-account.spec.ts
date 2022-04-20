@@ -1,7 +1,6 @@
-import { Encrypter } from './../../../protocols/encrypter'
-import { expect, test, describe, jest } from '@jest/globals'
 import { DbAddAccount } from './db-add-account'
-import { LoadUserByUsernameRepository, Hasher, AccountModel, AddAccountParams, AddAccountRepository } from './db-add-account-protocols'
+import { LoadUserByUsernameRepository, Hasher, AccountModel, AddAccountParams, AddAccountRepository, Encrypter } from './db-add-account-protocols'
+import { expect, test, describe, jest } from '@jest/globals'
 
 const mockAccountParams = (): AddAccountParams => ({
   username: 'any_username',

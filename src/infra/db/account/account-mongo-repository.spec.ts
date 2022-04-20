@@ -1,5 +1,5 @@
 import { AddAccountMongoRepository } from './account-mongo-repository'
-import { AddAccountParams } from './../../../domain/usecases/account/add-account'
+import { AddAccountParams } from './account-mongo-repository-protocols'
 
 import { MongoHelper } from './../../helpers/mongo-helper'
 import { Collection } from 'mongodb'

@@ -1,6 +1,5 @@
 import { DbAddTransaction } from './db-add-transaction'
-import { TransactionParam } from './../../../domain/usecases/transaction/add-transaction'
-import { AddTransactionRepository } from '../../protocols/add-transaction-repository'
+import { TransactionParam, AddTransactionRepository } from './db-add-transaction-protocols'
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
 import MockDate from 'mockdate'
 

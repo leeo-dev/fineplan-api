@@ -1,8 +1,7 @@
-import { AddTransaction } from './../../../../domain/usecases/transaction/add-transaction'
+import { AddTransaction, HttpRequest, HttpResponse, Controller } from './deposit-controller-protocols'
 import { badRequest, noContent } from './../../../helpers/http/http'
-import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
-import { Controller } from './../../../protocols/controller'
 import { InvalidParamError, LengthParamError, MissingParamError } from '../../../errors'
+
 export class DepositController implements Controller {
   constructor (private readonly addTransaction: AddTransaction) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {

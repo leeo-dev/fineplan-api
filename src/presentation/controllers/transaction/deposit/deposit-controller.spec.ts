@@ -1,9 +1,10 @@
-import { AddTransaction, TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
-import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
 import { DepositController } from './deposit-controller'
+import { AddTransaction, TransactionParam } from './deposit-controller-protocols'
+import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
 import MockDate from 'mockdate'
+
 const mockAddTransaction = (): AddTransaction => {
   class AddTransactionStub implements AddTransaction {
     async add (data: TransactionParam): Promise<void> {

@@ -1,8 +1,7 @@
-import { AddTransaction } from './../../../../domain/usecases/transaction/add-transaction'
+import { Controller, AddTransaction, HttpRequest, HttpResponse } from './withdraw-controller-protocols'
 import { badRequest, noContent } from './../../../helpers/http/http'
-import { HttpRequest, HttpResponse } from '../../login/signup/signup-protocols'
-import { Controller } from './../../../protocols/controller'
 import { InvalidParamError, LengthParamError, MissingParamError } from '../../../errors'
+
 export class WithdrawController implements Controller {
   constructor (private readonly addTransaction: AddTransaction) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {

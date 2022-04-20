@@ -1,6 +1,7 @@
-import { TransactionParam } from './../../../domain/usecases/transaction/add-transaction'
 import { TransactionMongoRepository } from './transaction-mongo-repository'
+import { TransactionParam } from './transaction-mongo-repository-protocols'
 import { MongoHelper } from './../../helpers/mongo-helper'
+
 import { Collection } from 'mongodb'
 import MockDate from 'mockdate'
 

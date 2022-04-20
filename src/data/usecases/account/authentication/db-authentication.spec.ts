@@ -1,9 +1,5 @@
-import { AccountModel } from './../../../../domain/models/account'
-import { HashComparer } from './../../../protocols/hash-comparer'
-import { Encrypter } from './../../../protocols/encrypter'
 import { DbAuthentication } from './db-authentication'
-import { LoadUserByUsernameRepository } from './../../../protocols/load-user-by-username-repository'
-import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
+import { AccountModel, HashComparer, Encrypter, LoadUserByUsernameRepository, AddAccountParams } from './db-authentication-protocols'
 import { expect, test, describe, jest } from '@jest/globals'
 
 const mockParams = (): AddAccountParams => ({

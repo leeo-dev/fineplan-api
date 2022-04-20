@@ -1,8 +1,4 @@
-import { Encrypter } from './../../../protocols/encrypter'
-import { HashComparer } from './../../../protocols/hash-comparer'
-import { LoadUserByUsernameRepository } from './../../../protocols/load-user-by-username-repository'
-import { Authentication } from '../../../../domain/usecases/account/authentication'
-import { AddAccountParams } from '../add-account/db-add-account-protocols'
+import { Encrypter, HashComparer, LoadUserByUsernameRepository, Authentication, AddAccountParams } from './db-authentication-protocols'
 
 export class DbAuthentication implements Authentication {
   constructor (
