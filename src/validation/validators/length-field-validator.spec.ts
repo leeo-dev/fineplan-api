@@ -8,4 +8,9 @@ describe('Length Field Validator', () => {
     const error = sut.validate({ name: 'na' })
     expect(error).toEqual(new LengthParamError('name'))
   })
+  test('should returns null if validation succeeds', () => {
+    const sut = new LengthFieldValidator('name')
+    const error = sut.validate({ name: 'any_name' })
+    expect(error).toBeNull()
+  })
 })
