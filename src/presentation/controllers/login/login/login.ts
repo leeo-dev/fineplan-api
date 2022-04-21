@@ -1,12 +1,13 @@
-import { Controller, HttpRequest, HttpResponse } from './login-protocols'
+import { Controller, HttpRequest, HttpResponse, Validation } from './login-protocols'
 import { MissingParamError } from '../../../errors'
 import { unauthorized } from './../../../helpers/http/http'
 import { badRequest, ok } from '../../../helpers/http/http'
 import { Authentication } from './../../../../domain/usecases/account/authentication'
 
 export class LoginController implements Controller {
-  constructor (private readonly authentication: Authentication) {}
+  constructor (private readonly authentication: Authentication, private readonly validationComposite: Validation) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+    this.validationComposite.validate(httpRequest.body)
     const requiredFields = ['username', 'password']
     for (const field of requiredFields) {
       if (!httpRequest.body[field]) {
