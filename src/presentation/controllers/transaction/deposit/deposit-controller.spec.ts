@@ -1,3 +1,4 @@
+import { Validation } from './../../../protocols/validation'
 import { DepositController } from './deposit-controller'
 import { AddTransaction, TransactionParam } from './deposit-controller-protocols'
 import { LengthParamError, MissingParamError, InvalidParamError } from '../../../errors'
@@ -14,15 +15,26 @@ const mockAddTransaction = (): AddTransaction => {
   return new AddTransactionStub()
 }
 
+const mockValidationComposite = (): Validation => {
+  class ValidationComposite implements Validation {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+  return new ValidationComposite()
+}
+
 type SutTypes = {
   sut: DepositController
   addTransactionStub: AddTransaction
+  validationCompositeStub: Validation
 }
 
 const makeSut = (): SutTypes => {
+  const validationCompositeStub = mockValidationComposite()
   const addTransactionStub = mockAddTransaction()
-  const sut = new DepositController(addTransactionStub)
-  return { sut, addTransactionStub }
+  const sut = new DepositController(addTransactionStub, validationCompositeStub)
+  return { sut, addTransactionStub, validationCompositeStub }
 }
 
 const mockTransaction = (type: string): TransactionParam => ({
@@ -36,6 +48,22 @@ const mockTransaction = (type: string): TransactionParam => ({
 describe('Deposit Controller', () => {
   beforeAll(() => { MockDate.set(new Date()) })
   afterAll(() => { MockDate.reset() })
+  test('Should call Validation Composite with correct values', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    const validateSpy = jest.spyOn(validationCompositeStub, 'validate')
+    const httpRequest = {
+      body: {
+        title: 'any_title',
+        amount: 250,
+        date: '2020-05-05'
+      },
+      user: {
+        id: 'any_id'
+      }
+    }
+    await sut.handle(httpRequest)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
   test('Should return 400 if no title is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
