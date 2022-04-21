@@ -1,4 +1,4 @@
-import { MissingParamError } from './../../presentation/errors/missing-param-error'
+import { MissingParamError } from '../presentation/errors/missing-param-error'
 import { expect, test, describe } from '@jest/globals'
 import { RequiredFieldsValidator } from './required-fields-validator'
 

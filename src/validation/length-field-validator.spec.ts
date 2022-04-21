@@ -1,5 +1,5 @@
 import { LengthFieldValidator } from './length-field-validator'
-import { LengthParamError } from './../../presentation/errors'
+import { LengthParamError } from '../presentation/errors'
 import { expect, test, describe } from '@jest/globals'
 
 describe('Length Field Validator', () => {

@@ -1,5 +1,5 @@
-import { LengthParamError } from './../../presentation/errors'
-import { Validation } from './../../presentation/protocols/validation'
+import { LengthParamError } from '../presentation/errors'
+import { Validation } from '../presentation/protocols/validation'
 export class LengthFieldValidator implements Validation {
   constructor (private readonly fieldName: string,
     private readonly minLength: number = 3,
