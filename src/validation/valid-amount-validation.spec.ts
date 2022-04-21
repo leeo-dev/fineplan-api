@@ -8,4 +8,9 @@ describe('Valid Amount Validator', () => {
     const error = sut.validate({ amount: 'invalid_param' })
     expect(error).toEqual(new InvalidParamError('amount'))
   })
+  test('should returns null if validation succeeds', () => {
+    const sut = new ValidAmountValidation('amount')
+    const error = sut.validate({ amount: 250 })
+    expect(error).toBeNull()
+  })
 })
