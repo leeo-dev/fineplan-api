@@ -1,6 +1,7 @@
+import { MissingParamError } from './../../../errors/missing-param-error'
 import { LoginController } from './login'
 import { Validation } from './login-protocols'
-import { ok, unauthorized } from '../../../helpers/http/http'
+import { badRequest, ok, unauthorized } from '../../../helpers/http/http'
 import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
 import { Authentication } from './../../../../domain/usecases/account/authentication'
 import { expect, test, describe, jest } from '@jest/globals'
@@ -49,6 +50,17 @@ describe('Login Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(compositeSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+  test('Should return an error if Validation Composite fails', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    jest.spyOn(validationCompositeStub, 'validate').mockReturnValueOnce(new MissingParamError('username'))
+    const httpRequest = {
+      body: {
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('username')))
   })
   test('should Login Controller calls Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
