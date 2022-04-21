@@ -2,7 +2,7 @@ import { Validation } from './../../../protocols/validation'
 import { WithdrawController } from './withdraw-controller'
 import { AddTransaction, TransactionParam } from './withdraw-controller-protocols'
 import { MissingParamError } from '../../../errors'
-import { badRequest, noContent } from './../../../helpers/http/http'
+import { badRequest, forbidden, noContent } from './../../../helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
 
 const mockTransaction = (type: string): TransactionParam => ({
@@ -94,6 +94,19 @@ describe('Deposit Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(mockTransaction('withdraw'))
+  })
+  test('Should return 403 if no id is provided', async () => {
+    const { sut, addTransactionStub } = makeSut()
+    jest.spyOn(addTransactionStub, 'add')
+    const httpRequest = {
+      body: {
+        title: 'any_title',
+        amount: 250,
+        date: '2020-05-05'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(forbidden(new MissingParamError('id')))
   })
   test('Should return 204 on success', async () => {
     const { sut } = makeSut()

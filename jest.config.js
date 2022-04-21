@@ -5,7 +5,8 @@ module.exports = {
     '!<rootDir>/src/**/*-protocols.ts',
     '!<rootDir>/src/**/protocols/**',
     '!<rootDir>/src/main/**',
-    '!<rootDir>/src/infra/helper/mongo-helper.ts'
+    '!<rootDir>/src/@types/**',
+    '!<rootDir>/src/infra/helpers/mongo-helper.ts'
   ],
   testEnvironment: 'node',
   transform: {

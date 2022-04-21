@@ -6,7 +6,7 @@ export class LengthFieldValidator implements Validation {
     private readonly maxLength: number = 25) {}
 
   validate (input: any): Error | null {
-    if (input[this.fieldName]?.length < 3 || input[this.fieldName]?.length > 25) return new LengthParamError(this.fieldName, this.minLength, this.maxLength)
+    if (input[this.fieldName].length < 3 || input[this.fieldName].length > 25) return new LengthParamError(this.fieldName, this.minLength, this.maxLength)
     return null
   }
 }
