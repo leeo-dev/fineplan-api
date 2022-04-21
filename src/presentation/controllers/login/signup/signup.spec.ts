@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
-import { LengthParamError, UsernameInUseError, MissingParamError } from '../../../../presentation/errors'
-import { AddAccount, AddAccountParams } from './signup-protocols'
+import { UsernameInUseError } from '../../../../presentation/errors'
+import { AddAccount, AddAccountParams, Validation } from './signup-protocols'
 import { forbidden, serverError, ok } from '../../../../presentation/helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
 
@@ -14,63 +14,41 @@ const mockAccount = (): AddAccount => {
   return new AddAccountStub()
 }
 
+const mockValidationComposite = (): Validation => {
+  class ValidationComposite implements Validation {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidationComposite()
+}
+
 type SutType = {
   sut: SignUpController
   addAccountStub: AddAccount
+  validationCompositeStub: Validation
 }
 
 const makeSut = (): SutType => {
+  const validationCompositeStub = mockValidationComposite()
   const addAccountStub = mockAccount()
-  const sut = new SignUpController(addAccountStub)
-  return { sut, addAccountStub }
+  const sut = new SignUpController(addAccountStub, validationCompositeStub)
+  return { sut, addAccountStub, validationCompositeStub }
 }
 
 describe('SignUp Controller', () => {
-  test('should SignUp Controller returns 400 if no username is provided ', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        password: 'any_password'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('username'))
-  })
-  test('should SignUp Controller returns 400 if no password is provided ', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        username: 'any_username'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('password'))
-  })
-  test('should SignUp Controller returns 400 if username is less than 3 or more than 25 character ', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        username: 'an',
-        password: 'any_password'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new LengthParamError('username', 3, 25))
-  })
-  test('should SignUp Controller returns 400 if password is less than 3 or more than 25 character ', async () => {
-    const { sut } = makeSut()
+  test('Should call Validation Composite with correct values', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    const compositeSpy = jest.spyOn(validationCompositeStub, 'validate')
     const httpRequest = {
       body: {
         username: 'any_username',
-        password: 'an'
+        password: 'any_password'
       }
     }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new LengthParamError('password', 3, 25))
+    await sut.handle(httpRequest)
+    expect(compositeSpy).toHaveBeenCalledWith(httpRequest.body)
   })
   test('should SignUp Controller calls AddAccount with correct values', async () => {
     const { sut, addAccountStub } = makeSut()
