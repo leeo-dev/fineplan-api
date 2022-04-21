@@ -44,20 +44,18 @@ describe('DbLoadAccountIdByAccessToken', () => {
     await sut.loadIdByAccessToken('any_accessToken')
     expect(decryptSpy).toHaveBeenCalledWith('any_accessToken')
   })
-  test('Should return if decrypter returns null', async () => {
+  test('Should return null if decrypter returns null', async () => {
     const { sut, decrypterStub } = makeSut()
     jest.spyOn(decrypterStub, 'decrypt').mockReturnValueOnce(null)
     const id = await sut.loadIdByAccessToken('any_accessToken')
     expect(id).toBeNull()
   })
 
-  test('Should throw if decrypter trows', async () => {
-    const { sut, decrypterStub } = makeSut()
-    jest.spyOn(decrypterStub, 'decrypt').mockImplementationOnce(() => {
-      throw new Error()
-    })
-    const promise = sut.loadIdByAccessToken('any_accessToken')
-    await expect(promise).rejects.toThrow()
+  test('Should return null LoadAccountById return null', async () => {
+    const { sut, loadAccountByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadAccountByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(null))
+    const account = await sut.loadIdByAccessToken('any_accessToken')
+    expect(account).toBeNull()
   })
 
   test('Should call LoadAccountById with correct id', async () => {
@@ -73,6 +71,11 @@ describe('DbLoadAccountIdByAccessToken', () => {
     })
     const promise = sut.loadIdByAccessToken('any_accessToken')
     await expect(promise).rejects.toThrow()
+  })
+  test('Should return an account on success', async () => {
+    const { sut } = makeSut()
+    const account = await sut.loadIdByAccessToken('any_accessToken')
+    expect(account).toEqual(mockAccount())
   })
   test('Should return an account on success', async () => {
     const { sut } = makeSut()
