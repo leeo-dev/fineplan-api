@@ -8,7 +8,12 @@ export class JwtAdapter implements Encrypter, Decrypter {
   }
 
   decrypt (accessToken: string): DecrypterParam | null {
-    const result: any = jwt.verify(accessToken, this.secret)
-    return result
+    try {
+      const result: any = jwt.verify(accessToken, this.secret)
+      return result
+    } catch (error) {
+      if (error.message === 'invalid signature') return null
+      throw new Error(error)
+    }
   }
 }

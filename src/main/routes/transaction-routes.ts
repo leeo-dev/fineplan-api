@@ -8,5 +8,5 @@ import { adaptMiddleware } from '../adapters/express-middleware-route-adapter'
 export default (router: Router): void => {
   const authMiddleware = adaptMiddleware(makeMiddleware())
   router.post('/transaction/deposit', authMiddleware, adaptRoute(makeDepositController()))
-  router.post('/transaction/withdraw', adaptRoute(makeWithdrawController()))
+  router.post('/transaction/withdraw', authMiddleware, adaptRoute(makeWithdrawController()))
 }
