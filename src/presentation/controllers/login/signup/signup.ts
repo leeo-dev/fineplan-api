@@ -1,11 +1,15 @@
-import { HttpRequest, HttpResponse, Controller } from './signup-protocols'
+import { HttpRequest, HttpResponse, Controller, Validation } from './signup-protocols'
 import { badRequest, forbidden, ok, serverError } from '../../../helpers/http/http'
 import { UsernameInUseError, MissingParamError, LengthParamError } from '../../../errors'
 import { AddAccount } from '../../../../domain/usecases/account/add-account'
 export class SignUpController implements Controller {
-  constructor (private readonly addAccount: AddAccount) {}
+  constructor (private readonly addAccount: AddAccount,
+    private readonly validationComposite: Validation
+  ) {}
+
   async handle (httpRequest: HttpRequest): Promise <HttpResponse> {
     try {
+      this.validationComposite.validate(httpRequest.body)
       const requiredFields = ['username', 'password']
       for (const field of requiredFields) {
         const lengthField = httpRequest.body[field]?.length
