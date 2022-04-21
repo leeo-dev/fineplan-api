@@ -1,9 +1,19 @@
 import { LoginController } from './login'
+import { Validation } from './login-protocols'
 import { ok, unauthorized } from '../../../helpers/http/http'
-import { MissingParamError } from '../../../errors'
 import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
 import { Authentication } from './../../../../domain/usecases/account/authentication'
 import { expect, test, describe, jest } from '@jest/globals'
+
+const mockValidationComposite = (): Validation => {
+  class ValidationComposite implements Validation {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidationComposite()
+}
 
 const mockAuthentication = (): Authentication => {
   class AuthenticationStub implements Authentication {
@@ -17,38 +27,29 @@ const mockAuthentication = (): Authentication => {
 type SutTypes = {
   sut: LoginController
   authenticationStub: Authentication
+  validationCompositeStub: Validation
 }
 
 const makeSut = (): SutTypes => {
+  const validationCompositeStub = mockValidationComposite()
   const authenticationStub = mockAuthentication()
-  const sut = new LoginController(authenticationStub)
-  return { sut, authenticationStub }
+  const sut = new LoginController(authenticationStub, validationCompositeStub)
+  return { sut, authenticationStub, validationCompositeStub }
 }
 
 describe('Login Controller', () => {
-  test('should Login Controller returns 400 if no username is provided ', async () => {
-    const { sut } = makeSut()
+  test('Should call Validation Composite with correct values', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    const compositeSpy = jest.spyOn(validationCompositeStub, 'validate')
     const httpRequest = {
       body: {
+        username: 'any_username',
         password: 'any_password'
       }
     }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('username'))
+    await sut.handle(httpRequest)
+    expect(compositeSpy).toHaveBeenCalledWith(httpRequest.body)
   })
-  test('should Login Controller returns 400 if no password is provided ', async () => {
-    const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        username: 'any_username'
-      }
-    }
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('password'))
-  })
-
   test('should Login Controller calls Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
     const addSpy = jest.spyOn(authenticationStub, 'auth')
