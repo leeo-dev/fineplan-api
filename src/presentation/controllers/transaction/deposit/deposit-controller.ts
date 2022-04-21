@@ -1,10 +1,12 @@
+import { Validation } from './../../../protocols/validation'
 import { AddTransaction, HttpRequest, HttpResponse, Controller } from './deposit-controller-protocols'
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { InvalidParamError, LengthParamError, MissingParamError } from '../../../errors'
 
 export class DepositController implements Controller {
-  constructor (private readonly addTransaction: AddTransaction) {}
+  constructor (private readonly addTransaction: AddTransaction, private readonly validationComposite: Validation) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+    this.validationComposite.validate(httpRequest.body)
     const requiredFields = ['title', 'date', 'amount']
     for (const field of requiredFields) {
       const lengthField = httpRequest.body[field]?.length
