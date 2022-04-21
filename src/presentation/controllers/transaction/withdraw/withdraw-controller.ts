@@ -1,10 +1,13 @@
-import { Controller, AddTransaction, HttpRequest, HttpResponse } from './withdraw-controller-protocols'
+import { Controller, AddTransaction, HttpRequest, HttpResponse, Validation } from './withdraw-controller-protocols'
 import { badRequest, noContent } from './../../../helpers/http/http'
 import { InvalidParamError, LengthParamError, MissingParamError } from '../../../errors'
 
 export class WithdrawController implements Controller {
-  constructor (private readonly addTransaction: AddTransaction) {}
+  constructor (private readonly addTransaction: AddTransaction,
+    private readonly validationComposite: Validation) {}
+
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+    this.validationComposite.validate(httpRequest.body)
     const requiredFields = ['title', 'date', 'amount']
     for (const field of requiredFields) {
       const lengthField = httpRequest.body[field]?.length
