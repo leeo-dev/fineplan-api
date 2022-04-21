@@ -37,14 +37,6 @@ describe('JWT Adapter', () => {
       sut.decrypt('any_token')
       expect(verifySpy).toHaveBeenCalledWith('any_token', secret)
     })
-    test('Should JTW Adapter return null if JWT throws invalid signature', async () => {
-      const sut = makeSut()
-      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
-        throw new Error('invalid signature')
-      })
-      const token = sut.decrypt('any_token')
-      expect(token).toBeNull()
-    })
     test('Should return an id on success', async () => {
       const sut = makeSut()
       const id = sut.decrypt('any_token')

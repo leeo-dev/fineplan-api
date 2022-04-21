@@ -32,7 +32,7 @@ describe('Transaction Routes', () => {
       await request(app)
         .post('/api/transaction/withdraw')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
-        .expect(204)
+        .expect(403)
     })
   })
 })
