@@ -1,7 +1,7 @@
 import { SignUpController } from './signup'
-import { UsernameInUseError } from '../../../../presentation/errors'
 import { AddAccount, AddAccountParams, Validation } from './signup-protocols'
-import { forbidden, serverError, ok } from '../../../../presentation/helpers/http/http'
+import { MissingParamError, UsernameInUseError } from '../../../../presentation/errors'
+import { forbidden, serverError, ok, badRequest } from '../../../../presentation/helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
 
 const mockAccount = (): AddAccount => {
@@ -49,6 +49,17 @@ describe('SignUp Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(compositeSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+  test('Should return an error if Validation Composite fails', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    jest.spyOn(validationCompositeStub, 'validate').mockReturnValueOnce(new MissingParamError('username'))
+    const httpRequest = {
+      body: {
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('username')))
   })
   test('should SignUp Controller calls AddAccount with correct values', async () => {
     const { sut, addAccountStub } = makeSut()
