@@ -1,4 +1,4 @@
-import { ok } from './../../../helpers/http/http'
+import { ok, noContent } from './../../../helpers/http/http'
 import { LoadTransactionsController } from './load-transactions'
 import { TransactionModel } from './../../../../domain/models/transaction'
 import { LoadTransactions } from './../../../../domain/usecases/transaction/load-transactions'
@@ -43,5 +43,11 @@ describe('LoadTransactions Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle({ user: { id: 'any_id' } })
     expect(httpResponse).toEqual(ok(mockTransactions()))
+  })
+  test('Should return 204 if LoadTransactions returns empty', async () => {
+    const { sut, loadTransactionsStub } = makeSut()
+    jest.spyOn(loadTransactionsStub, 'loadAll').mockReturnValueOnce(Promise.resolve([]))
+    const httpResponse = await sut.handle({ user: { id: 'any_id' } })
+    expect(httpResponse).toEqual(noContent())
   })
 })
