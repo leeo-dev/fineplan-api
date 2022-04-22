@@ -44,4 +44,13 @@ describe('DbLoadTransactions UseCase', () => {
     const transactions = await sut.loadAll('any_id')
     expect(transactions).toEqual(mockTransactions())
   })
+  test('Should throw if LoadTransactionsRepository throws', async () => {
+    const { sut, loadTransactionsRepositoryStub } = makeSut()
+    jest.spyOn(loadTransactionsRepositoryStub, 'loadAll').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.loadAll('any_id')
+    await expect(promise).rejects.toThrow()
+  })
 })
