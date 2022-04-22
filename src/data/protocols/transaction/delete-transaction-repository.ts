@@ -1,4 +1,4 @@
 export interface DeleteTransactionRepository {
-  delete: (userId: string) => Promise<void>
+  delete: (id: string) => Promise<void>
 
 }
