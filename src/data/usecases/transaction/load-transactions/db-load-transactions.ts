@@ -4,7 +4,7 @@ import { LoadTransactions } from './../../../../domain/usecases/transaction/load
 export class DbALoadTransactions implements LoadTransactions {
   constructor (private readonly loadTransactionsRepository: LoadTransactionsRepository) {}
   async loadAll (userId: string): Promise<TransactionModel[]> {
-    await this.loadTransactionsRepository.loadAll(userId)
-    return []
+    const transactions = await this.loadTransactionsRepository.loadAll(userId)
+    return transactions
   }
 }
