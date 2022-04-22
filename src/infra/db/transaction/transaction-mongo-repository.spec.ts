@@ -63,4 +63,13 @@ describe('Transaction Mongo Repository', () => {
       expect(transactions).toBeTruthy()
     })
   })
+  describe('delete()', () => {
+    test('Should TransactionMongoRepository delete a transaction successfully', async () => {
+      const transactionMongo = await transactionCollection.insertOne(mockTransaction('deposit'))
+      const sut = makeSut()
+      await sut.delete(String(transactionMongo.insertedId))
+      const transactions = await transactionCollection.findOne({ _id: transactionMongo.insertedId })
+      expect(transactions).toBeFalsy()
+    })
+  })
 })
