@@ -1,3 +1,3 @@
 export interface DeleteTransaction {
-  delete: (id: string) => Promise<null>
+  delete: (id: string) => Promise<void>
 }
