@@ -2,7 +2,7 @@ import { TransactionModel } from './../../../../domain/models/transaction'
 import { LoadTransactionsRepository } from '../../../protocols/transaction/load-transactions'
 import MockDate from 'mockdate'
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
-import { DbALoadTransactions } from './db-load-transactions'
+import { DbLoadTransactions } from './db-load-transactions'
 
 const mockTransactions = (): TransactionModel[] => ([
   { id: 'any_id', title: 'any_title', amount: -250, date: new Date(), type: 'withdraw', created_at: new Date(), user_id: 'any_user_id' },
@@ -19,13 +19,13 @@ const mockLoadTransactionsRepository = (): LoadTransactionsRepository => {
 }
 
 type SutTypes = {
-  sut: DbALoadTransactions
+  sut: DbLoadTransactions
   loadTransactionsRepositoryStub: LoadTransactionsRepository
 }
 
 const makeSut = (): SutTypes => {
   const loadTransactionsRepositoryStub = mockLoadTransactionsRepository()
-  const sut = new DbALoadTransactions(loadTransactionsRepositoryStub)
+  const sut = new DbLoadTransactions(loadTransactionsRepositoryStub)
   return { sut, loadTransactionsRepositoryStub }
 }
 
