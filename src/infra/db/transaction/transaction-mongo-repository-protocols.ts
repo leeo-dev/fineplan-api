@@ -1,2 +1,5 @@
+export * from '../../../domain/usecases/transaction/load-transactions'
 export * from '../../../domain/usecases/transaction/add-transaction'
-export * from './../../../data/protocols/transaction/add-transaction-repository'
+export * from '../../../data/protocols/transaction/add-transaction-repository'
+export * from '../../../data/protocols/transaction/load-transactions'
+export * from '../../../domain/models/transaction'
