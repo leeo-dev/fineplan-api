@@ -1,10 +1,18 @@
-import { MissingParamError } from './../../../errors/missing-param-error'
-import { LoginController } from './login'
-import { Validation } from './login-protocols'
-import { badRequest, ok, unauthorized } from '../../../helpers/http/http'
-import { AddAccountParams } from './../../../../domain/usecases/account/add-account'
-import { Authentication } from './../../../../domain/usecases/account/authentication'
+import { SignUpController } from './signup-controller'
+import { AddAccount, AddAccountParams, Validation } from './signup-controller-protocols'
+import { MissingParamError, UsernameInUseError } from '../../../../presentation/errors'
+import { forbidden, serverError, ok, badRequest } from '../../../../presentation/helpers/http/http'
 import { expect, test, describe, jest } from '@jest/globals'
+
+const mockAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    async add (accountParams: AddAccountParams): Promise<string | null> {
+      return await Promise.resolve('valid_token')
+    }
+  }
+
+  return new AddAccountStub()
+}
 
 const mockValidationComposite = (): Validation => {
   class ValidationComposite implements Validation {
@@ -16,29 +24,20 @@ const mockValidationComposite = (): Validation => {
   return new ValidationComposite()
 }
 
-const mockAuthentication = (): Authentication => {
-  class AuthenticationStub implements Authentication {
-    async auth (data: AddAccountParams): Promise<string | null> {
-      return await Promise.resolve('any_token')
-    }
-  }
-  return new AuthenticationStub()
-}
-
-type SutTypes = {
-  sut: LoginController
-  authenticationStub: Authentication
+type SutType = {
+  sut: SignUpController
+  addAccountStub: AddAccount
   validationCompositeStub: Validation
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (): SutType => {
   const validationCompositeStub = mockValidationComposite()
-  const authenticationStub = mockAuthentication()
-  const sut = new LoginController(authenticationStub, validationCompositeStub)
-  return { sut, authenticationStub, validationCompositeStub }
+  const addAccountStub = mockAccount()
+  const sut = new SignUpController(addAccountStub, validationCompositeStub)
+  return { sut, addAccountStub, validationCompositeStub }
 }
 
-describe('Login Controller', () => {
+describe('SignUp Controller', () => {
   test('Should call Validation Composite with correct values', async () => {
     const { sut, validationCompositeStub } = makeSut()
     const compositeSpy = jest.spyOn(validationCompositeStub, 'validate')
@@ -62,9 +61,9 @@ describe('Login Controller', () => {
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse).toEqual(badRequest(new MissingParamError('username')))
   })
-  test('should Login Controller calls Authentication with correct values', async () => {
-    const { sut, authenticationStub } = makeSut()
-    const addSpy = jest.spyOn(authenticationStub, 'auth')
+  test('should SignUp Controller calls AddAccount with correct values', async () => {
+    const { sut, addAccountStub } = makeSut()
+    const addSpy = jest.spyOn(addAccountStub, 'add')
     const httpRequest = {
       body: {
         username: 'any_username',
@@ -74,23 +73,11 @@ describe('Login Controller', () => {
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
-
-  test('Should Login Controller calls Authentication with correct values', async () => {
-    const { sut, authenticationStub } = makeSut()
-    const addSpy = jest.spyOn(authenticationStub, 'auth')
-    const httpRequest = {
-      body: {
-        username: 'any_username',
-        password: 'any_password'
-      }
-    }
-    await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
-  })
-
-  test('Should Login Controller returns 401 if invalid credential is provided', async () => {
-    const { sut, authenticationStub } = makeSut()
-    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(Promise.resolve(null))
+  test('should SignUp Controller returns 403 if username is already in use', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
+      return await Promise.resolve(null)
+    })
     const httpRequest = {
       body: {
         username: 'any_username',
@@ -98,10 +85,23 @@ describe('Login Controller', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(unauthorized())
+    expect(httpResponse).toEqual(forbidden(new UsernameInUseError()))
   })
-
-  test('Should LoginController return an access token on success', async () => {
+  test('should SignUp Controller returns 500 if AddAccount throws', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        username: 'any_username',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('should SignUp Controller returns 200 on success', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -110,6 +110,6 @@ describe('Login Controller', () => {
       }
     }
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse).toEqual(ok({ accessToken: 'any_token' }))
+    expect(httpResponse).toEqual(ok({ accessToken: 'valid_token' }))
   })
 })

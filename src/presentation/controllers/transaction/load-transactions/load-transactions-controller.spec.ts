@@ -1,8 +1,7 @@
+import { LoadTransactionsController } from './load-transactions-controller'
+import { TransactionModel, LoadTransactions } from './load-transactions-controller-protocols'
 import { AccessDeniedError } from './../../../errors/access-denied-error'
 import { ok, noContent, serverError, forbidden } from './../../../helpers/http/http'
-import { LoadTransactionsController } from './load-transactions'
-import { TransactionModel } from './../../../../domain/models/transaction'
-import { LoadTransactions } from './../../../../domain/usecases/transaction/load-transactions'
 import MockDate from 'mockdate'
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
 

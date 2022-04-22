@@ -1,5 +1,4 @@
-import { Validation } from './../../../protocols/validation'
-import { AddTransaction, HttpRequest, HttpResponse, Controller } from './deposit-controller-protocols'
+import { AddTransaction, HttpRequest, HttpResponse, Controller, Validation } from './deposit-controller-protocols'
 import { badRequest, noContent } from './../../../helpers/http/http'
 
 export class DepositController implements Controller {

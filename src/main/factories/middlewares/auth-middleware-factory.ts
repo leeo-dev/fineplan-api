@@ -1,6 +1,6 @@
 import { DbLoadAccountByAccessToken } from '../../../data/usecases/account/load-account-by-access-token/db-load-account-by-access-token'
 import { Middleware } from './../../../presentation/protocols/middleware'
-import { JwtAdapter } from '../../../infra/cryptography/jwt-adapter'
+import { JwtAdapter } from '../../../infra/cryptography/jwt-adapter/jwt-adapter'
 import { AddAccountMongoRepository } from '../../../infra/db/account/account-mongo-repository'
 import env from '../../config/env'
 import { AuthMiddleware } from '../../../presentation/middlewares/auth-middleware'

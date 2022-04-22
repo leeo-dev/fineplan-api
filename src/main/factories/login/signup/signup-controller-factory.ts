@@ -1,9 +1,9 @@
 import { makeSignUpValidation } from './signup-validation-factory'
 import { AddAccountMongoRepository } from '../../../../infra/db/account/account-mongo-repository'
 import { DbAddAccount } from '../../../../data/usecases/account/add-account/db-add-account'
-import { SignUpController } from '../../../../presentation/controllers/login/signup/signup'
-import { BcryptAdapter } from '../../../../infra/cryptography/bcrypt-adapter'
-import { JwtAdapter } from '../../../../infra/cryptography/jwt-adapter'
+import { SignUpController } from '../../../../presentation/controllers/login/signup/signup-controller'
+import { BcryptAdapter } from '../../../../infra/cryptography/bcrypt-adapter/bcrypt-adapter'
+import { JwtAdapter } from '../../../../infra/cryptography/jwt-adapter/jwt-adapter'
 import env from '../../../config/env'
 export const makeSignUpController = (): SignUpController => {
   const jwtAdapter = new JwtAdapter(env.JWT_SECRET)

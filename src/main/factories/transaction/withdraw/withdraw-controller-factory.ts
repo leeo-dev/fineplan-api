@@ -1,5 +1,5 @@
 import { makeWithdrawValidation } from './withdraw-validation-factory'
-import { DbAddTransaction } from '../../../../data/usecases/transaction/db-add-transaction'
+import { DbAddTransaction } from '../../../../data/usecases/transaction/add-transaction/db-add-transaction'
 import { TransactionMongoRepository } from '../../../../infra/db/transaction/transaction-mongo-repository'
 import { WithdrawController } from '../../../../presentation/controllers/transaction/withdraw/withdraw-controller'
 import { Controller } from '../../../../presentation/protocols/controller'
