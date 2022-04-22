@@ -39,4 +39,9 @@ describe('DbLoadTransactions UseCase', () => {
     await sut.loadAll('any_id')
     expect(loadAllSpy).toHaveBeenCalledWith('any_id')
   })
+  test('Should return a list of Transactions on success', async () => {
+    const { sut } = makeSut()
+    const transactions = await sut.loadAll('any_id')
+    expect(transactions).toEqual(mockTransactions())
+  })
 })
