@@ -2,7 +2,8 @@ import { DeleteTransactionRepository } from './../../../protocols/transaction/de
 import { DeleteTransaction } from './../../../../domain/usecases/transaction/delete-transaction'
 export class DbDeleteTransaction implements DeleteTransaction {
   constructor (private readonly deleteTransactionRepository: DeleteTransactionRepository) {}
-  async delete (id: string): Promise<void> {
+  async delete (id: string): Promise<boolean> {
     await this.deleteTransactionRepository.delete(id)
+    return true
   }
 }
