@@ -67,7 +67,6 @@ describe('Transaction Mongo Repository', () => {
     test('Should TransactionMongoRepository load a transaction successfully', async () => {
       const sut = makeSut()
       const transactionMongo = await transactionCollection.insertOne(mockTransaction('deposit'))
-      console.log(transactionMongo.insertedId)
       const transaction = await sut.loadById(String(transactionMongo.insertedId))
       expect(transaction).toBeTruthy()
     })

@@ -6,7 +6,8 @@ export class DeleteTransactionController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { params } = httpRequest
-      if (!params.id) badRequest(new MissingParamError('id'))
+      if (!params.id) return badRequest(new MissingParamError('id'))
+      console.log('id: ', params)
       const isDeleted = await this.deleteTransaction.delete(params.id)
       if (!isDeleted) return notFound(new MissingParamError('id'))
       return noContent()
