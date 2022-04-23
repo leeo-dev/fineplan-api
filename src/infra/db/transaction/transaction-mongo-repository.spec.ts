@@ -63,6 +63,15 @@ describe('Transaction Mongo Repository', () => {
       expect(transactions).toBeTruthy()
     })
   })
+  describe('loadById()', () => {
+    test('Should TransactionMongoRepository load a transaction successfully', async () => {
+      const sut = makeSut()
+      const transactionMongo = await transactionCollection.insertOne(mockTransaction('deposit'))
+      console.log(transactionMongo.insertedId)
+      const transaction = await sut.loadById(String(transactionMongo.insertedId))
+      expect(transaction).toBeTruthy()
+    })
+  })
   describe('delete()', () => {
     test('Should TransactionMongoRepository delete a transaction successfully', async () => {
       const transactionMongo = await transactionCollection.insertOne(mockTransaction('deposit'))

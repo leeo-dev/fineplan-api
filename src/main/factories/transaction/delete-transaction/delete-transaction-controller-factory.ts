@@ -4,6 +4,6 @@ import { TransactionMongoRepository } from './../../../../infra/db/transaction/t
 import { DeleteTransactionController } from './../../../../presentation/controllers/transaction/delete-transaction/delete-transaction-controller'
 export const makeDeleteTransactionController = (): Controller => {
   const transactionMongoRepository = new TransactionMongoRepository()
-  const dbDeleteTransaction = new DbDeleteTransaction(transactionMongoRepository)
+  const dbDeleteTransaction = new DbDeleteTransaction(transactionMongoRepository, transactionMongoRepository)
   return new DeleteTransactionController(dbDeleteTransaction)
 }
