@@ -14,14 +14,18 @@ const mockTransactions = (): TransactionParam => (
   { title: 'any_title', amount: -250, date: new Date(), type: 'withdraw', created_at: new Date(), user_id: 'any_user_id' }
 )
 
-const insertTransaction = async (): Promise<string> => {
+const insertUser = async (): Promise<string[]> => {
   const account = await accountCollection.insertOne({ username: 'any_user', password: 'any_password' })
-  await transactionCollection.insertMany([
-    { title: 'any_title', amount: -250, date: new Date(), type: 'withdraw', created_at: new Date(), user_id: String(account.insertedId) },
+  const accessToken = jwt.sign({ id: String(account.insertedId) }, env.JWT_SECRET)
+  return [accessToken, String(account.insertedId)]
+}
+
+const insertTransaction = async (accountId: string): Promise<any> => {
+  const transactions = await transactionCollection.insertMany([
+    { title: 'any_title', amount: -250, date: new Date(), type: 'withdraw', created_at: new Date(), user_id: accountId },
     { title: 'other_title', amount: 1200, date: new Date(), type: 'deposit', created_at: new Date(), user_id: 'other_user_id' }
   ])
-  const accessToken = jwt.sign({ id: String(account.insertedId) }, env.JWT_SECRET)
-  return accessToken
+  return transactions.insertedIds
 }
 
 describe('Transaction Routes', () => {
@@ -40,7 +44,7 @@ describe('Transaction Routes', () => {
     await accountCollection.deleteMany({})
   })
   describe('Deposit', () => {
-    test('Should create a transaction on success', async () => {
+    test('Should create a transaction (deposit) on success', async () => {
       await request(app)
         .post('/api/transaction/deposit')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
@@ -48,7 +52,7 @@ describe('Transaction Routes', () => {
     })
   })
   describe('Withdraw', () => {
-    test('Should create a transaction on success', async () => {
+    test('Should create a transaction (withdraw) on success', async () => {
       await request(app)
         .post('/api/transaction/withdraw')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
@@ -57,13 +61,25 @@ describe('Transaction Routes', () => {
   })
   describe('LoadTransactions', () => {
     test('Should load a list of transaction on success', async () => {
-      const accessToken = await insertTransaction()
-      console.log(jwt.verify(accessToken, env.JWT_SECRET))
+      const [accessToken, accountId] = await insertUser()
+      await insertTransaction(accountId)
       await request(app)
         .get('/api/transactions')
         .set('x-access-token', accessToken)
         .send(mockTransactions())
         .expect(200)
+    })
+  })
+  describe('DeleteTransaction', () => {
+    test('Should delete a transaction on success', async () => {
+      const [accessToken, accountId] = await insertUser()
+      const transactions = await insertTransaction(accountId)
+      const transactionId: string = String(transactions['0'])
+      await request(app)
+        .delete(`/api/transactions/${transactionId}`)
+        .set('x-access-token', accessToken)
+        .send(mockTransactions())
+        .expect(204)
     })
   })
 })
