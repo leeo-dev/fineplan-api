@@ -14,7 +14,7 @@
 - [x] Create Withdraw Transaction Route.
 - [x] Load All Transactions.
 - [ ] Update Transaction.
-- [ ] Delete Transaction.
+- [x] Delete Transaction.
 - [ ] Create Category.
 - [ ] Update Category.
 - [ ] Delete Category.
