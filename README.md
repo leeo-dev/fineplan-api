@@ -1,4 +1,5 @@
 [![Building](https://badgen.net/badge/icon/Actively%20Building%20?icon=bitcoin-lightning&label&color=purple)](https://github.com/leeo-dev/fineplan-api)
+[![Build Status](https://app.travis-ci.com/leeo-dev/fineplan-api.svg?branch=master)](https://app.travis-ci.com/leeo-dev/fineplan-api)
 <h1 align="center">🏡 Fine Plan API</h1>
 
 <p align="center">Tracker finances API.</p>
