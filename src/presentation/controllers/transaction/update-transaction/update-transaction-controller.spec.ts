@@ -3,10 +3,11 @@ import { UpdateTransactionController } from './update-transaction-controller'
 import { HttpRequest } from './../../../protocols/http'
 import { badRequest } from './../../../helpers/http/http'
 // import { TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
-import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
+import { TransactionEdit, UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
 import { Validation } from './../../../protocols/validation'
-import { expect, test, describe, jest } from '@jest/globals'
+import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
 import { TransactionModel } from '../load-transactions/load-transactions-controller-protocols'
+import MockDate from 'mockdate'
 
 // const mockTransaction = (type: string): TransactionParam => ({
 //   title: 'any_title',
@@ -29,20 +30,21 @@ const mockTransactionModel = (type: string): TransactionModel => ({
 const mockHttpRequest = (): HttpRequest => ({
   body: {
     title: 'any_title',
+    type: 'any_type',
     amount: 250,
-    date: '2020-05-05'
+    date: new Date()
   },
   user: {
-    id: 'any_id'
+    id: 'any_user_id'
   },
   params: {
-    id: 'any_id'
+    id: 'any_transaction_id'
   }
 })
 
 const mockUpdateTransaction = (): UpdateTransaction => {
   class UpdateTransactionStub implements UpdateTransaction {
-    async update (transactionId: string, userId: string): Promise<TransactionModel | null> {
+    async update (transaction: TransactionEdit): Promise<TransactionModel | null> {
       return await Promise.resolve(mockTransactionModel('deposit'))
     }
   }
@@ -72,6 +74,8 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Update Transaction', () => {
+  beforeAll(() => { MockDate.set(new Date()) })
+  afterAll(() => { MockDate.reset() })
   test('Should call Validation Composite with correct values', async () => {
     const { sut, validationCompositeStub } = makeSut()
     const validateSpy = jest.spyOn(validationCompositeStub, 'validate')
@@ -83,5 +87,18 @@ describe('Update Transaction', () => {
     jest.spyOn(validationCompositeStub, 'validate').mockReturnValueOnce(new MissingParamError('title'))
     const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('title')))
+  })
+  test('Should call UpdateTransaction with correct values', async () => {
+    const { sut, updateTransactionStub } = makeSut()
+    const updateSpy = jest.spyOn(updateTransactionStub, 'update')
+    await sut.handle(mockHttpRequest())
+    expect(updateSpy).toHaveBeenCalledWith({
+      id: 'any_transaction_id',
+      title: 'any_title',
+      type: 'any_type',
+      amount: 250,
+      date: new Date(),
+      user_id: 'any_user_id'
+    })
   })
 })
