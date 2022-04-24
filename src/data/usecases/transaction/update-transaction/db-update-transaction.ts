@@ -10,7 +10,7 @@ export class DbUpdateTransaction implements UpdateTransaction {
   async update (transaction: TransactionEdit): Promise<TransactionModel | null> {
     const isValid = await this.loadTransactionByIdRepository.loadById(transaction.user_id)
     if (!isValid) return null
-    await this.updateTransactionRepository.update(transaction)
-    return null
+    const updatedTransaction = await this.updateTransactionRepository.update(transaction)
+    return updatedTransaction
   }
 }
