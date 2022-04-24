@@ -1,3 +1,4 @@
+import { MissingParamError } from './../../../errors/missing-param-error'
 import { badRequest } from './../../../helpers/http/http'
 import { Validation } from './../../../protocols/validation'
 import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
@@ -12,6 +13,12 @@ export class UpdateTransactionController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const error = this.validationComposite.validate(httpRequest.body)
     if (error) return badRequest(error)
+    const { title, type, amount, date } = httpRequest.body
+    const { id } = httpRequest.params
+    const user = httpRequest.user
+    if (!user) return badRequest(new MissingParamError('user_id'))
+    const userId = String(user.id)
+    this.updateTransaction.update({ id, title, type, amount, date, user_id: userId })
     return {
       statusCode: 200,
       body: null

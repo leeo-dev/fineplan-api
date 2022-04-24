@@ -1,5 +1,6 @@
 import { TransactionModel } from '@/domain/models/transaction'
+export type TransactionEdit = Omit<TransactionModel, 'created_at'>
 export interface UpdateTransaction {
-  update: (transactionId: string, userId: string) => Promise<TransactionModel | null>
+  update: (transaction: TransactionEdit) => Promise<TransactionModel | null>
 
 }
