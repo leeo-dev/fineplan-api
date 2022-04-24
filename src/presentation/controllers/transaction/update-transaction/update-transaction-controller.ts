@@ -1,5 +1,5 @@
 import { MissingParamError } from './../../../errors/missing-param-error'
-import { badRequest } from './../../../helpers/http/http'
+import { badRequest, notFound } from './../../../helpers/http/http'
 import { Validation } from './../../../protocols/validation'
 import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
 import { HttpRequest, HttpResponse } from '../deposit/deposit-controller-protocols'
@@ -18,7 +18,8 @@ export class UpdateTransactionController implements Controller {
     const user = httpRequest.user
     if (!user) return badRequest(new MissingParamError('user_id'))
     const userId = String(user.id)
-    this.updateTransaction.update({ id, title, type, amount, date, user_id: userId })
+    const transaction = await this.updateTransaction.update({ id, title, type, amount, date, user_id: userId })
+    if (!transaction) return notFound(new MissingParamError('id'))
     return {
       statusCode: 200,
       body: null
