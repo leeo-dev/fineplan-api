@@ -1,9 +1,6 @@
 import { MissingParamError } from './../../../errors/missing-param-error'
 import { badRequest, notFound, serverError, ok } from './../../../helpers/http/http'
-import { Validation } from './../../../protocols/validation'
-import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
-import { HttpRequest, HttpResponse } from '../deposit/deposit-controller-protocols'
-import { Controller } from './../../../protocols/controller'
+import { Validation, UpdateTransaction, Controller, HttpRequest, HttpResponse } from './update-transaction-controller-protocols'
 export class UpdateTransactionController implements Controller {
   constructor (
     private readonly updateTransaction: UpdateTransaction,

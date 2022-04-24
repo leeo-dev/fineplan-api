@@ -1,12 +1,8 @@
-import { MissingParamError } from './../../../errors'
 import { UpdateTransactionController } from './update-transaction-controller'
-import { HttpRequest } from './../../../protocols/http'
+import { Validation, UpdateTransaction, HttpRequest, TransactionEdit, TransactionModel } from './update-transaction-controller-protocols'
+import { MissingParamError } from './../../../errors'
 import { badRequest, notFound, serverError, ok } from './../../../helpers/http/http'
-// import { TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
-import { TransactionEdit, UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
-import { Validation } from './../../../protocols/validation'
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
-import { TransactionModel } from '../load-transactions/load-transactions-controller-protocols'
 import MockDate from 'mockdate'
 
 // const mockTransaction = (type: string): TransactionParam => ({
