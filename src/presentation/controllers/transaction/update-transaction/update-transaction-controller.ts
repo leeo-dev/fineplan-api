@@ -20,7 +20,7 @@ export class UpdateTransactionController implements Controller {
       if (!user) return badRequest(new MissingParamError('user_id'))
       const transaction = await this.updateTransaction.update({ id, title, type, amount, date, user_id: String(user.id) })
       if (!transaction) return notFound(new MissingParamError('id'))
-      return ok(null)
+      return ok(transaction)
     } catch (error: any) {
       return serverError(error)
     }
