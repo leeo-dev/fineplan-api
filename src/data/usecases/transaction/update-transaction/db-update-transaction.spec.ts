@@ -58,4 +58,10 @@ describe('DbDeleteTransaction', () => {
     await sut.update(transactionEdit('deposit'))
     expect(updateSpy).toHaveBeenCalledWith(transactionEdit('deposit').user_id)
   })
+  test('Should return null if LoadTransactionByIdRepository return false', async () => {
+    const { sut, loadTransactionByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(false))
+    const updatedTransaction = await sut.update(transactionEdit('deposit'))
+    expect(updatedTransaction).toBeFalsy()
+  })
 })
