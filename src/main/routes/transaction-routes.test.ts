@@ -46,7 +46,7 @@ describe('Transaction Routes', () => {
   describe('Deposit', () => {
     test('Should create a transaction (deposit) on success', async () => {
       await request(app)
-        .post('/api/transaction/deposit')
+        .post('/api/transactions/deposit')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
         .expect(403)
     })
@@ -54,7 +54,7 @@ describe('Transaction Routes', () => {
   describe('Withdraw', () => {
     test('Should create a transaction (withdraw) on success', async () => {
       await request(app)
-        .post('/api/transaction/withdraw')
+        .post('/api/transactions/withdraw')
         .send({ title: 'Salário', amount: 2000, date: '2022-02-02' })
         .expect(403)
     })
@@ -80,6 +80,19 @@ describe('Transaction Routes', () => {
         .set('x-access-token', accessToken)
         .send(mockTransactions())
         .expect(204)
+    })
+  })
+  describe('UpdateTransaction', () => {
+    test('Should update a transaction on success', async () => {
+      const [accessToken, accountId] = await insertUser()
+      const transactions = await insertTransaction(accountId)
+      const transactionId: string = String(transactions['0'])
+      await request(app)
+        .put(`/api/transactions/${transactionId}`)
+        .set('x-access-token', accessToken)
+        .send({ title: 'Salário', amount: 200, date: '2022-02-02', type: 'deposit' })
+        .send(mockTransactions())
+        .expect(200)
     })
   })
 })
