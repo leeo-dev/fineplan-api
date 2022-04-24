@@ -54,14 +54,20 @@ const makeSut = (): SutTypes => {
 describe('DbDeleteTransaction', () => {
   test('Should call LoadTransactionByIdRepository with correct id', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
-    const updateSpy = jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById')
+    const loadByIdSpy = jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById')
     await sut.update(transactionEdit('deposit'))
-    expect(updateSpy).toHaveBeenCalledWith(transactionEdit('deposit').user_id)
+    expect(loadByIdSpy).toHaveBeenCalledWith(transactionEdit('deposit').user_id)
   })
   test('Should return null if LoadTransactionByIdRepository return false', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
     jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(false))
     const updatedTransaction = await sut.update(transactionEdit('deposit'))
     expect(updatedTransaction).toBeFalsy()
+  })
+  test('Should call UpdateTransaction With correct values', async () => {
+    const { sut, updateTransactionRepositoryStub } = makeSut()
+    const updateSpy = jest.spyOn(updateTransactionRepositoryStub, 'update')
+    await sut.update(transactionEdit('deposit'))
+    expect(updateSpy).toHaveBeenCalledWith(transactionEdit('deposit'))
   })
 })
