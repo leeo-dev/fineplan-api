@@ -1,6 +1,7 @@
 import { DbUpdateTransaction } from './db-update-transaction'
 import { LoadTransactionByIdRepository, TransactionEdit, TransactionModel, UpdateTransactionRepository } from './db-update-transaction-protocols'
-import { expect, test, describe, jest } from '@jest/globals'
+import { expect, test, describe, jest, afterAll, beforeAll } from '@jest/globals'
+import MockDate from 'mockdate'
 
 const mockTransactionModel = (type: string): TransactionModel => ({
   id: 'any_id',
@@ -11,7 +12,7 @@ const mockTransactionModel = (type: string): TransactionModel => ({
   user_id: 'any_id',
   created_at: new Date()
 })
-const transactionEdit = (type: string): TransactionEdit => ({
+const mockTransactionEdit = (type: string): TransactionEdit => ({
   id: 'any_id',
   title: 'any_title',
   amount: type === 'deposit' ? 250 : -250,
@@ -52,22 +53,29 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbDeleteTransaction', () => {
+  beforeAll(() => { MockDate.set(new Date()) })
+  afterAll(() => { MockDate.reset() })
   test('Should call LoadTransactionByIdRepository with correct id', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById')
-    await sut.update(transactionEdit('deposit'))
-    expect(loadByIdSpy).toHaveBeenCalledWith(transactionEdit('deposit').user_id)
+    await sut.update(mockTransactionEdit('deposit'))
+    expect(loadByIdSpy).toHaveBeenCalledWith(mockTransactionEdit('deposit').user_id)
   })
   test('Should return null if LoadTransactionByIdRepository return false', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
     jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(false))
-    const updatedTransaction = await sut.update(transactionEdit('deposit'))
+    const updatedTransaction = await sut.update(mockTransactionEdit('deposit'))
     expect(updatedTransaction).toBeFalsy()
   })
   test('Should call UpdateTransaction With correct values', async () => {
     const { sut, updateTransactionRepositoryStub } = makeSut()
     const updateSpy = jest.spyOn(updateTransactionRepositoryStub, 'update')
-    await sut.update(transactionEdit('deposit'))
-    expect(updateSpy).toHaveBeenCalledWith(transactionEdit('deposit'))
+    await sut.update(mockTransactionEdit('deposit'))
+    expect(updateSpy).toHaveBeenCalledWith(mockTransactionEdit('deposit'))
+  })
+  test('Should returns an updated transaction on success', async () => {
+    const { sut } = makeSut()
+    const updatedTransaction = await sut.update(mockTransactionEdit('deposit'))
+    expect(updatedTransaction).toEqual(mockTransactionModel('deposit'))
   })
 })
