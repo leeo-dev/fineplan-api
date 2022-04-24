@@ -1,0 +1,6 @@
+export * from './../../../../domain/usecases/transaction/update-transaction'
+export * from './../../../protocols/transaction/load-transaction-by-id-repository'
+export * from './../../../protocols/transaction/update-transaction-repository'
+export * from '../../../../domain/models/transaction'
+export * from '../../../../domain/usecases/transaction/update-transaction'
+export * from './../../../../domain/models/transaction'

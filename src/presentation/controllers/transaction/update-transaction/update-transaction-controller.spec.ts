@@ -5,14 +5,6 @@ import { badRequest, notFound, serverError, ok } from './../../../helpers/http/h
 import { expect, test, describe, jest, beforeAll, afterAll } from '@jest/globals'
 import MockDate from 'mockdate'
 
-// const mockTransaction = (type: string): TransactionParam => ({
-//   title: 'any_title',
-//   amount: type === 'deposit' ? 250 : -250,
-//   date: new Date('2020-05-05'),
-//   type,
-//   user_id: 'any_id'
-// })
-
 const mockTransactionModel = (type: string): TransactionModel => ({
   id: 'any_id',
   title: 'any_title',
