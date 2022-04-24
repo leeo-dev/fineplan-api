@@ -78,4 +78,13 @@ describe('DbDeleteTransaction', () => {
     const updatedTransaction = await sut.update(mockTransactionEdit('deposit'))
     expect(updatedTransaction).toEqual(mockTransactionModel('deposit'))
   })
+  test('Should throw if LoadTransactionByIdRepository throws', async () => {
+    const { sut, loadTransactionByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.update(mockTransactionEdit('deposit'))
+    await expect(promise).rejects.toThrow()
+  })
 })
