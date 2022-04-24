@@ -1,5 +1,7 @@
+import { MissingParamError } from './../../../errors'
 import { UpdateTransactionController } from './update-transaction-controller'
 import { HttpRequest } from './../../../protocols/http'
+import { badRequest } from './../../../helpers/http/http'
 // import { TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
 import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
 import { Validation } from './../../../protocols/validation'
@@ -22,6 +24,20 @@ const mockTransactionModel = (type: string): TransactionModel => ({
   type,
   user_id: 'any_id',
   created_at: new Date()
+})
+
+const mockHttpRequest = (): HttpRequest => ({
+  body: {
+    title: 'any_title',
+    amount: 250,
+    date: '2020-05-05'
+  },
+  user: {
+    id: 'any_id'
+  },
+  params: {
+    id: 'any_id'
+  }
 })
 
 const mockUpdateTransaction = (): UpdateTransaction => {
@@ -59,20 +75,13 @@ describe('Update Transaction', () => {
   test('Should call Validation Composite with correct values', async () => {
     const { sut, validationCompositeStub } = makeSut()
     const validateSpy = jest.spyOn(validationCompositeStub, 'validate')
-    const httpRequest: HttpRequest = {
-      body: {
-        title: 'any_title',
-        amount: 250,
-        date: '2020-05-05'
-      },
-      user: {
-        id: 'any_id'
-      },
-      params: {
-        id: 'any_id'
-      }
-    }
-    await sut.handle(httpRequest)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    await sut.handle(mockHttpRequest())
+    expect(validateSpy).toHaveBeenCalledWith(mockHttpRequest().body)
+  })
+  test('Should return 400 if  ValidationComposite fails', async () => {
+    const { sut, validationCompositeStub } = makeSut()
+    jest.spyOn(validationCompositeStub, 'validate').mockReturnValueOnce(new MissingParamError('title'))
+    const httpResponse = await sut.handle(mockHttpRequest())
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('title')))
   })
 })
