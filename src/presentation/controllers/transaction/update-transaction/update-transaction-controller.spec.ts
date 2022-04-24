@@ -1,7 +1,7 @@
 import { MissingParamError } from './../../../errors'
 import { UpdateTransactionController } from './update-transaction-controller'
 import { HttpRequest } from './../../../protocols/http'
-import { badRequest, notFound, serverError } from './../../../helpers/http/http'
+import { badRequest, notFound, serverError, ok } from './../../../helpers/http/http'
 // import { TransactionParam } from './../../../../domain/usecases/transaction/add-transaction'
 import { TransactionEdit, UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
 import { Validation } from './../../../protocols/validation'
@@ -112,7 +112,12 @@ describe('Update Transaction', () => {
     jest.spyOn(updateTransactionStub, 'update').mockImplementationOnce(() => {
       throw new Error()
     })
-    const httpResponse = await sut.handle({ params: { id: 'any_id' } })
+    const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(mockHttpRequest())
+    expect(httpResponse).toEqual(ok(mockTransactionModel('deposit')))
   })
 })
