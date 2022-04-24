@@ -67,7 +67,7 @@ describe('DbDeleteTransaction', () => {
     const updatedTransaction = await sut.update(mockTransactionEdit('deposit'))
     expect(updatedTransaction).toBeFalsy()
   })
-  test('Should call UpdateTransaction With correct values', async () => {
+  test('Should call UpdateTransactionRepository With correct values', async () => {
     const { sut, updateTransactionRepositoryStub } = makeSut()
     const updateSpy = jest.spyOn(updateTransactionRepositoryStub, 'update')
     await sut.update(mockTransactionEdit('deposit'))
@@ -81,6 +81,15 @@ describe('DbDeleteTransaction', () => {
   test('Should throw if LoadTransactionByIdRepository throws', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
     jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.update(mockTransactionEdit('deposit'))
+    await expect(promise).rejects.toThrow()
+  })
+  test('Should throw if UpdateTransactionRepository throws', async () => {
+    const { sut, updateTransactionRepositoryStub } = makeSut()
+    jest.spyOn(updateTransactionRepositoryStub, 'update').mockImplementationOnce(() => {
       throw new Error()
     })
 
