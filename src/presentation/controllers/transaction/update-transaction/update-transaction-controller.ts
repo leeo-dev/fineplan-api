@@ -1,3 +1,4 @@
+import { badRequest } from './../../../helpers/http/http'
 import { Validation } from './../../../protocols/validation'
 import { UpdateTransaction } from './../../../../domain/usecases/transaction/update-transaction'
 import { HttpRequest, HttpResponse } from '../deposit/deposit-controller-protocols'
@@ -9,7 +10,8 @@ export class UpdateTransactionController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validationComposite.validate(httpRequest.body)
+    const error = this.validationComposite.validate(httpRequest.body)
+    if (error) return badRequest(error)
     return {
       statusCode: 200,
       body: null
