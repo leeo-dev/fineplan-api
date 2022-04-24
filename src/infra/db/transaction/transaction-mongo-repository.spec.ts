@@ -1,3 +1,4 @@
+import { AddAccountParams } from './../../../domain/usecases/account/add-account'
 import { TransactionMongoRepository } from './transaction-mongo-repository'
 import { TransactionModel, TransactionParam } from './transaction-mongo-repository-protocols'
 import { MongoHelper } from './../../helpers/mongo-helper'
@@ -20,6 +21,11 @@ const mockTransaction = (type: string): TransactionParam => ({
   user_id: 'any_id'
 })
 
+const mockAccountParams = (): AddAccountParams => ({
+  username: 'any_username',
+  password: 'hashed_password'
+})
+
 const mockTransactions = (): TransactionModel[] => ([
   { id: 'any_id', title: 'any_title', amount: -250, date: new Date(), type: 'withdraw', created_at: new Date(), user_id: 'any_user_id' },
   { id: 'other_id', title: 'other_title', amount: 1200, date: new Date(), type: 'deposit', created_at: new Date(), user_id: 'other_user_id' }
@@ -27,6 +33,7 @@ const mockTransactions = (): TransactionModel[] => ([
 
 describe('Transaction Mongo Repository', () => {
   let transactionCollection: Collection
+  let accountCollection: Collection
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL ?? '')
     MockDate.set(new Date())
@@ -39,7 +46,9 @@ describe('Transaction Mongo Repository', () => {
 
   beforeEach(async () => {
     transactionCollection = await MongoHelper.getCollection('transactions')
+    accountCollection = await MongoHelper.getCollection('account')
     await transactionCollection.deleteMany({})
+    await accountCollection.deleteMany({})
   })
   describe('add()', () => {
     test('Should TransactionMongoRepository insert a transaction successfully', async () => {
@@ -78,6 +87,31 @@ describe('Transaction Mongo Repository', () => {
       await sut.delete(String(transactionMongo.insertedId))
       const transactions = await transactionCollection.findOne({ _id: transactionMongo.insertedId })
       expect(transactions).toBeFalsy()
+    })
+  })
+  describe('update()', () => {
+    test('Should TransactionMongoRepository update a transaction successfully', async () => {
+      const accountMongo = await accountCollection.insertOne(mockAccountParams())
+      const transactionMongo = await transactionCollection.insertOne({
+        title: 'any_title',
+        amount: 250,
+        date: new Date('2020-05-05'),
+        created_at: new Date(),
+        type: 'deposit',
+        user_id: String(accountMongo.insertedId)
+      })
+      const sut = makeSut()
+      const updatedTransaction = await sut.update({
+        id: String(transactionMongo.insertedId),
+        title: 'other_title',
+        amount: 250,
+        date: new Date('2020-05-05'),
+        type: 'deposit',
+        user_id: String(accountMongo.insertedId)
+      })
+      console.log(updatedTransaction)
+      expect(updatedTransaction).toBeTruthy()
+      expect(updatedTransaction.title).toBe('other_title')
     })
   })
 })
