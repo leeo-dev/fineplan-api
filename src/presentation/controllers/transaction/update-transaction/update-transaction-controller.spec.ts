@@ -108,4 +108,9 @@ describe('Update Transaction', () => {
     const httpResponse = await sut.handle(mockHttpRequest())
     expect(httpResponse).toEqual(ok(mockTransactionModel('deposit')))
   })
+  test('Should return 400 if no params is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({ })
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('user_id')))
+  })
 })

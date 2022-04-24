@@ -1,6 +1,6 @@
 {
   "name": "fineplan-api",
-  "version": "1.5.1",
+  "version": "1.6.1",
   "description": "",
   "main": "src/main/server.ts",
   "scripts": {

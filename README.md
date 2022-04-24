@@ -19,7 +19,7 @@
 - [x] Create Deposit Transaction Route.
 - [x] Create Withdraw Transaction Route.
 - [x] Load All Transactions Route.
-- [ ] Update Transaction.
+- [x] Update Transaction.
 - [x] Delete Transaction Route.
 - [ ] Create Category Route.
 - [ ] Create Category Route.
