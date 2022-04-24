@@ -109,7 +109,6 @@ describe('Transaction Mongo Repository', () => {
         type: 'deposit',
         user_id: String(accountMongo.insertedId)
       })
-      console.log(updatedTransaction)
       expect(updatedTransaction).toBeTruthy()
       expect(updatedTransaction.title).toBe('other_title')
     })

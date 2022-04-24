@@ -9,7 +9,7 @@ const mockTransactionModel = (type: string): TransactionModel => ({
   amount: type === 'deposit' ? 250 : -250,
   date: new Date('2020-05-05'),
   type,
-  user_id: 'any_id',
+  user_id: 'any_user_id',
   created_at: new Date()
 })
 const mockTransactionEdit = (type: string): TransactionEdit => ({
@@ -18,7 +18,7 @@ const mockTransactionEdit = (type: string): TransactionEdit => ({
   amount: type === 'deposit' ? 250 : -250,
   date: new Date('2020-05-05'),
   type,
-  user_id: 'any_id'
+  user_id: 'any_user_id'
 })
 
 const mockUpdateTransactionRepository = (): UpdateTransactionRepository => {
@@ -59,7 +59,7 @@ describe('DbDeleteTransaction', () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadTransactionByIdRepositoryStub, 'loadById')
     await sut.update(mockTransactionEdit('deposit'))
-    expect(loadByIdSpy).toHaveBeenCalledWith(mockTransactionEdit('deposit').user_id)
+    expect(loadByIdSpy).toHaveBeenCalledWith(mockTransactionEdit('deposit').id)
   })
   test('Should return null if LoadTransactionByIdRepository return false', async () => {
     const { sut, loadTransactionByIdRepositoryStub } = makeSut()
