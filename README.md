@@ -7,7 +7,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/leeo-dev/fineplan-api/badge.svg?branch=master)](https://coveralls.io/github/leeo-dev/fineplan-api?branch=master)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
 
-<p align="center">Tracker finances API.</p>
+<p align="center">An Easy and efficient budget app and expenses tracker fo managing your money.</p>
 
 
 </div>
